@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6503f1a78e6dc4aaa77af99dc7abf6c6",
+    "content-hash": "f10d30dffe04b689e224b04d9ad960c6",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -1743,80 +1743,6 @@
             "time": "2024-06-05T09:38:52+00:00"
         },
         {
-            "name": "flowframe/laravel-trend",
-            "version": "v0.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Flowframe/laravel-trend.git",
-                "reference": "bae1232325a59a7c9e99a372c80afab82309503b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Flowframe/laravel-trend/zipball/bae1232325a59a7c9e99a372c80afab82309503b",
-                "reference": "bae1232325a59a7c9e99a372c80afab82309503b",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "^8.37|^9|^10.0|^11.0",
-                "php": "^8.2",
-                "spatie/laravel-package-tools": "^1.4.3"
-            },
-            "require-dev": {
-                "nunomaduro/collision": "^5.3|^6.1|^8.0",
-                "orchestra/testbench": "^6.15|^7.0|^8.0|^9.0",
-                "pestphp/pest": "^1.18|^2.34",
-                "pestphp/pest-plugin-laravel": "^1.1|^2.3",
-                "spatie/laravel-ray": "^1.23",
-                "vimeo/psalm": "^4.8|^5.6"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Flowframe\\Trend\\TrendServiceProvider"
-                    ],
-                    "aliases": {
-                        "Trend": "Flowframe\\Trend\\TrendFacade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Flowframe\\Trend\\": "src",
-                    "Flowframe\\Trend\\Database\\Factories\\": "database/factories"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Lars Klopstra",
-                    "email": "lars@flowframe.nl",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Easily generate model trends",
-            "homepage": "https://github.com/flowframe/laravel-trend",
-            "keywords": [
-                "Flowframe",
-                "laravel",
-                "laravel-trend"
-            ],
-            "support": {
-                "issues": "https://github.com/Flowframe/laravel-trend/issues",
-                "source": "https://github.com/Flowframe/laravel-trend/tree/v0.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/larsklopstra",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-03-14T13:45:40+00:00"
-        },
-        {
             "name": "fruitcake/php-cors",
             "version": "v1.3.0",
             "source": {
@@ -2424,16 +2350,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.48.14",
+            "version": "v10.48.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "27cb4736bb7e60a5311ec73160068dfbcf98336b"
+                "reference": "1723e038c9ec99b434e5bed9c27f044bd50a4ffb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/27cb4736bb7e60a5311ec73160068dfbcf98336b",
-                "reference": "27cb4736bb7e60a5311ec73160068dfbcf98336b",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/1723e038c9ec99b434e5bed9c27f044bd50a4ffb",
+                "reference": "1723e038c9ec99b434e5bed9c27f044bd50a4ffb",
                 "shasum": ""
             },
             "require": {
@@ -2627,7 +2553,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-06-21T10:06:42+00:00"
+            "time": "2024-07-02T18:01:24+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -8632,16 +8558,16 @@
         },
         {
             "name": "laravel/sail",
-            "version": "v1.30.0",
+            "version": "v1.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "e08b594052385ab9891dd86047e52da8a953c827"
+                "reference": "8ba049b6c06e0330b6aa1fb7af2746fb4da445e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/e08b594052385ab9891dd86047e52da8a953c827",
-                "reference": "e08b594052385ab9891dd86047e52da8a953c827",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/8ba049b6c06e0330b6aa1fb7af2746fb4da445e4",
+                "reference": "8ba049b6c06e0330b6aa1fb7af2746fb4da445e4",
                 "shasum": ""
             },
             "require": {
@@ -8691,7 +8617,7 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2024-06-18T17:36:56+00:00"
+            "time": "2024-07-01T20:55:03+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -11427,7 +11353,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "ext-pdo": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
