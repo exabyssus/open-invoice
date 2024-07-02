@@ -1,0 +1,51 @@
+<?php
+
+return [
+    'company' => [
+        'title' => 'Uzņēmuma nosaukums',
+        'registration_number' => 'Reģistrācijas nr.',
+        'vat_number' => 'PVN nr.',
+        'address' => 'Adrese',
+        'bank_iban' => 'IBAN nummurs (bankas konts)',
+        'bank_swift' => 'Bankas SWIFT',
+        'bank_name' => 'Bankas nosaukums',
+        'show_accounts' => 'Rādīt kontējumus rēķinā',
+        'logo' => 'Uzņēmuma logo',
+        'number_style' => 'Rēķina numerācijas tips',
+        'number_prefix' => 'Rēķina numerācijas priedēklis (prefix)',
+        'number_suffix' => 'Rēķina numerācijas piedēklis (suffix)',
+        'number_style_yearly' => 'Nummurs pēc kārtas (gadā)',
+        'number_style_all_time' => 'Nummurs pēc kārtas',
+        'number_style_date' => 'Datums',
+        'number_style_none' => 'Brīvi ievadāms',
+    ],
+    'client' => [
+        'title' => 'Nosaukums',
+        'registration_number' => 'Reģistrācijas nr.',
+        'vat_number' => 'PVN nr.',
+        'agreement_number' => 'Līguma nr.',
+        'address' => 'Adrese',
+        'bank_iban' => 'IBAN nummurs (bankas konts)',
+        'bank_swift' => 'Bankas SWIFT',
+        'bank_name' => 'Bankas nosaukums',
+    ],
+    'invoice' => [
+        'invoice_number' => 'Rēķina nr.',
+        'client' => 'Klients',
+        'date' => 'Rēķina datums',
+        'due_date' => 'Apmaksas termiņš',
+        'dept_amount' => 'Parāds',
+        'advance' => 'Avansa rēķins',
+        'currency' => 'Valūta',
+        'comment' => 'Komentārs',
+        'is_paid' => 'Apmaksāts',
+        'amount_total' => 'Summa kopā',
+    ],
+    'invoice_line' => [
+        'title' => 'Nosaukums',
+        'price' => 'Cena (par vienību)',
+        'vat' => 'PVN',
+        'quantity' => 'Daudzums',
+        'unit' => 'Vienība',
+    ]
+];
