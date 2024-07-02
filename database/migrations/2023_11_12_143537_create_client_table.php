@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id');
             $table->string('title');
-            $table->string('registration_number');
-            $table->string('address');
+            $table->string('registration_number')->nullable();
+            $table->string('address')->nullable();
             $table->string('agreement_number')->nullable();
             $table->string('vat_number')->nullable();
             $table->string('bank_name')->nullable();
