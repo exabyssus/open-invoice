@@ -12,6 +12,7 @@ use App\Services\GenerateInvoiceNumber;
 use App\Support\Money;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -45,7 +46,12 @@ class InvoiceResource extends Resource
                     ->required(),
                 Select::make('client_id')
                     ->label(__('resources.invoice.client'))
+                    ->searchable(['title', 'registration_number'])
                     ->options(Client::query()->get()->pluck('title', 'id'))
+                    ->createOptionForm(self::getNewClientForm())
+                    ->createOptionUsing(function (array $data): int {
+                            return Filament::getTenant()->clients()->create($data)->getKey();
+                    })
                     ->required(),
                 DatePicker::make('date')->default(now())
                     ->label(__('resources.invoice.date'))
@@ -148,6 +154,34 @@ class InvoiceResource extends Resource
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getNewClientForm(): array
+    {
+        return [
+            TextInput::make('title')
+                ->label(__('resources.client.title'))
+                ->required(),
+
+            Group::make(function () {
+                return [
+                    TextInput::make('registration_number')->label(__('resources.client.registration_number')),
+                    TextInput::make('vat_number')->label(__('resources.client.vat_number')),
+                ];
+            })->columns(2),
+
+            TextInput::make('address')->label(__('resources.client.address')),
+
+            Group::make(function () {
+                return [
+                    TextInput::make('bank_name')->label(__('resources.client.bank_name')),
+                    TextInput::make('bank_swift')->label(__('resources.client.bank_swift')),
+                    TextInput::make('bank_iban')->label(__('resources.client.bank_iban')),
+                ];
+            })->columns(3),
+
+            TextInput::make('agreement_number')->label(__('resources.client.agreement_number'))
+        ];
     }
 
     public static function getPages(): array

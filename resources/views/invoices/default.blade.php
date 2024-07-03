@@ -159,10 +159,10 @@ $client->contract_number = null;
                             <td>{{ $client->registration_number }}</td>
                         </tr>
                     @endif
-                    @if($company->vat_number)
+                    @if($client->vat_number)
                         <tr>
                             <th>PVN nr.</th>
-                            <td>{{ $company->vat_number }}</td>
+                            <td>{{ $client->vat_number }}</td>
                         </tr>
                     @endif
                     @if($client->address)
