@@ -51,8 +51,13 @@ class InvoiceResource extends Resource
                     ->required(),
                 DatePicker::make('date')->default(now())
                     ->label(__('resources.invoice.date'))
+                    ->native(false)
+                    ->displayFormat('d/m/Y')
                     ->required(),
-                DatePicker::make('due_date')->label(__('resources.invoice.due_date')),
+                DatePicker::make('due_date')
+                    ->label(__('resources.invoice.due_date'))
+                    ->native(false)
+                    ->displayFormat('d/m/Y'),
                 TextInput::make('dept_amount')
                     ->label(__('resources.invoice.dept_amount'))
                     ->formatStateUsing(fn($state) => $state / 100)
