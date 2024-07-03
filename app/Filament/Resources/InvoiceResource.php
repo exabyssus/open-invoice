@@ -10,9 +10,12 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Services\GenerateInvoiceNumber;
 use App\Support\Money;
+use App\Units;
+use App\Vat;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -27,13 +30,6 @@ class InvoiceResource extends Resource
 
     protected static ?string $label = '';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function getRelations(): array
-    {
-        return [
-            \App\Filament\InvoiceLinesRelationManager::class
-        ];
-    }
 
     public static function form(Form $form): Form
     {
@@ -82,6 +78,40 @@ class InvoiceResource extends Resource
                     ->label(__('resources.invoice.is_paid'))
                     ->inline(false)
                     ->visibleOn('edit'),
+
+                Repeater::make('lines')
+                    ->relationship()
+                    ->label('Rēķina rindas')
+                    ->schema([
+                        Group::make(function () {
+                            return [
+                                TextInput::make('title')
+                                    ->label(__('resources.invoice_line.title'))
+                                    ->columnSpan(2)
+                                    ->required()
+                                    ->columns(4)
+                                    ->maxLength(255),
+                                TextInput::make('price')
+                                    ->label(__('resources.invoice_line.price'))
+                                    ->formatStateUsing(fn(\Money\Money|null $state) => $state?->getAmount() / 100)
+                                    ->mutateDehydratedStateUsing(fn($state) => (float)$state * 100)
+                                    ->required()
+                                    ->numeric('decimal'),
+                                Select::make('unit')
+                                    ->label(__('resources.invoice_line.unit'))
+                                    ->required()
+                                    ->options(Units::asOptions()),
+                                TextInput::make('quantity')
+                                    ->label(__('resources.invoice_line.quantity'))
+                                    ->required()
+                                    ->numeric('integer'),
+                                Select::make('vat')
+                                    ->label(__('resources.invoice_line.vat'))
+                                    ->required()
+                                    ->options(Vat::asOptions())->default(Vat::VAT_21),
+                            ];
+                        })->columns(6)
+                    ])->columnSpanFull()
             ]);
     }
 
