@@ -107,10 +107,11 @@ class InvoiceResource extends Resource
                                     ->numeric('integer'),
                                 Select::make('vat')
                                     ->label(__('resources.invoice_line.vat'))
+                                    ->visible(fn() => Filament::getTenant()->vat_number !== null)
                                     ->required()
                                     ->options(Vat::asOptions())->default(Vat::VAT_21),
                             ];
-                        })->columns(6)
+                        })->columns(Filament::getTenant()->vat_number ? 6 : 5)
                     ])->columnSpanFull()
             ]);
     }

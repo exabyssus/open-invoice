@@ -291,11 +291,13 @@ $client->contract_number = null;
                 <td>K 6110</td>
                 <td>{{ Money::defaultFormat($invoice->getTotal()) }}</td>
             </tr>
+            @if((int)$invoice->getTotalVAT()->getAmount() > 0 )
             <tr>
                 <td>D 2310</td>
                 <td>K 5721</td>
                 <td>{{ Money::defaultFormat($invoice->getTotalVAT()) }}</td>
             </tr>
+            @endif
             <tr>
                 <td>D 2620</td>
                 <td>K 2310</td>
