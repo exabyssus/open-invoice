@@ -86,11 +86,11 @@ $client->contract_number = null;
         <td width="50%" style="text-align: right;">
             <h2>
                 <span style="color: #666;">@if($invoice->advance)
-                        AVANSA
-                    @endif RĒĶINA NR.: </span>{{ $invoice->invoice_number }}
+                        {{ mb_strtoupper(__('invoice.advance_invoice')) }}
+                    @endif {{ mb_strtoupper(__('invoice.invoice_number')) }}: </span>{{ $invoice->invoice_number }}
             </h2>
             <div style="font-size: 15px;">
-                <span style="color: #666;">DATUMS: </span>{{ $invoice->date->format('d.m.Y') }}
+                <span style="color: #666;">{{ mb_strtoupper(__('invoice.invoice_date')) }}: </span>{{ $invoice->date->format('d.m.Y') }}
             </div>
         </td>
     </tr>
@@ -100,45 +100,45 @@ $client->contract_number = null;
     <table>
         <tr>
             <td width="49%" style="vertical-align: top;">
-                <h1>PAKALPOJUMU SNIEDZĒJS</h1>
+                <h1>{{ mb_strtoupper(__('invoice.supplier')) }}</h1>
                 <table class="company-properties">
                     <tr>
-                        <th>Nosaukums</th>
+                        <th>{{ __('invoice.company_name') }}</th>
                         <th>{{ $company->title }}</th>
                     </tr>
                     @if($company->registration_number)
                         <tr>
-                            <th>Rēģistrācijas nr.</th>
+                            <th>{{ __('invoice.company_registration_number') }}</th>
                             <td>{{ $company->registration_number }}</td>
                         </tr>
                     @endif
                     @if($company->vat_number)
                         <tr>
-                            <th>PVN nr.</th>
+                            <th>{{ __('invoice.company_vat_number') }}</th>
                             <td>{{ $company->vat_number }}</td>
                         </tr>
                     @endif
                     @if($company->address)
                         <tr>
-                            <th>Jur. adrese</th>
+                            <th>{{ __('invoice.company_address') }}</th>
                             <td>{{ $company->address }}</td>
                         </tr>
                     @endif
                     @if($company->bank_name)
                         <tr>
-                            <th>Bankas nosaukums</th>
+                            <th>{{ __('invoice.company_bank_name') }}</th>
                             <td>{{ $company->bank_name }}</td>
                         </tr>
                     @endif
                     @if($company->bank_swift)
                         <tr>
-                            <th>SWIFT kods</th>
+                            <th>{{ __('invoice.company_bank_swift') }}</th>
                             <td>{{ $company->bank_swift }}</td>
                         </tr>
                     @endif
                     @if($company->bank_iban)
                         <tr>
-                            <th>Norēķinu konts</th>
+                            <th>{{ __('invoice.company_bank_iban') }}</th>
                             <td>{{ $company->bank_iban }}</td>
                         </tr>
                     @endif
@@ -146,46 +146,46 @@ $client->contract_number = null;
             </td>
             <td width="2%"></td>
             <td width="49%" class="company-properties" style="vertical-align: top;">
-                <h1>MAKSĀTĀJS</h1>
+                <h1>{{ mb_strtoupper(__('invoice.client')) }}</h1>
 
                 <table style="margin-top: 20px;">
                     <tr>
-                        <th>Nosaukums</th>
+                        <th>{{ __('invoice.client_name') }}</th>
                         <th>{{ $client->title }}</th>
                     </tr>
                     @if($client->registration_number)
                         <tr>
-                            <th>Rēģistrācijas nr.</th>
+                            <th>{{ __('invoice.client_registration_number') }}</th>
                             <td>{{ $client->registration_number }}</td>
                         </tr>
                     @endif
                     @if($client->vat_number)
                         <tr>
-                            <th>PVN nr.</th>
+                            <th>{{ __('invoice.client_vat_number') }}</th>
                             <td>{{ $client->vat_number }}</td>
                         </tr>
                     @endif
                     @if($client->address)
                         <tr>
-                            <th>Jur. adrese</th>
+                            <th>{{ __('invoice.client_address') }}</th>
                             <td>{{ $client->address }}</td>
                         </tr>
                     @endif
                     @if($client->bank_name)
                         <tr>
-                            <th>Bankas nosaukums</th>
+                            <th>{{ __('invoice.client_bank_name') }}</th>
                             <td>{{ $client->bank_name }}</td>
                         </tr>
                     @endif
                     @if($client->bank_swift)
                         <tr>
-                            <th>SWIFT kods</th>
+                            <th>{{ __('invoice.client_bank_swift') }}</th>
                             <td>{{ $client->bank_swift }}</td>
                         </tr>
                     @endif
                     @if($client->bank_iban)
                         <tr>
-                            <th>Norēķinu konts</th>
+                            <th>{{ __('invoice.client_bank_iban') }}</th>
                             <td>{{ $client->bank_iban }}</td>
                         </tr>
                     @endif
@@ -200,18 +200,18 @@ $client->contract_number = null;
     <tr>
         <td width="34%">
             @if($invoice->due_date)
-                <div>Apmaksas termiņš: {{ $invoice->due_date->format('d.m.Y') }}</div>
+                <div>{{ __('invoice.due_date') }}: {{ $invoice->due_date->format('d.m.Y') }}</div>
             @endif
         </td>
 
         <td width="33%" style="text-align: center">
             @if($client->contract_number)
-                Līguma nr.: {{ $client->contract_number }}
+                {{ __('invoice.contract_number') }}: {{ $client->contract_number }}
             @endif
         </td>
 
         <td width="33%" style="text-align: right">
-            <div>Apmaksas veids: Pārskaitījums</div>
+            <div>{{ __('invoice.payment_method') }}: {{ __('invoice.payment_method_transfer') }}</div>
         </td>
     </tr>
 </table>
@@ -220,12 +220,12 @@ $client->contract_number = null;
 <table border="0" width="100%" style="margin-top: 20px;" class="pad-lg">
 
     <tr class="border-b">
-        <th width="5%" style="text-align: center">Nr.</th>
-        <th width="40%">Nosaukums</th>
-        <th style="text-align: center">Mērv.</th>
-        <th style="text-align: center">Daudzums</th>
-        <th style="text-align: center">Cena</th>
-        <th style="text-align: center">Summa</th>
+        <th width="5%" style="text-align: center">{{ __('invoice.row_number') }}</th>
+        <th width="40%">{{ __('invoice.row_name') }}</th>
+        <th style="text-align: center">{{ __('invoice.row_unit') }}</th>
+        <th style="text-align: center">{{ __('invoice.row_quantity') }}</th>
+        <th style="text-align: center">{{ __('invoice.row_price') }}</th>
+        <th style="text-align: center">{{ __('invoice.row_total') }}</th>
     </tr>
 
     @php
@@ -235,7 +235,7 @@ $client->contract_number = null;
         <tr class="border-b">
             <td style="text-align: center">{{ $index + 1 }}</td>
             <td>{{ $line->title }}</td>
-            <td style="text-align: center">Stundas</td>
+            <td style="text-align: center">{{ \App\Units::asOptions()[$line->unit] }}</td>
             <td style="text-align: center">{{ $line->quantity }}</td>
             <td style="text-align: center">{{ Money::defaultFormat($line->price) }}</td>
             <td style="text-align: center">{{ Money::defaultFormat($line->total) }}</td>
@@ -244,42 +244,44 @@ $client->contract_number = null;
 
     @if($invoice->getTotalVAT()->isPositive() || $invoice->getTotalDept()->isPositive())
         <tr>
-            <td colspan="5" style="text-align: right">Kopā:</td>
+            <td colspan="5" style="text-align: right">{{ __('invoice.sum_total') }}:</td>
             <td style="text-align: center;">{{ Money::defaultFormat($invoice->getTotal()) }}</td>
         </tr>
     @endif
 
     @if($invoice->getTotalDept()->isPositive())
         <tr>
-            <td colspan="5" style="text-align: right">Kavēts maksājums:</td>
+            <td colspan="5" style="text-align: right">{{ __('invoice.sum_debt') }}:</td>
             <td style="text-align: center;">{{ Money::defaultFormat($invoice->getTotalDept()) }}</td>
         </tr>
     @endif
 
-    @if($invoice->getTotalVAT()->isPositive())
+    @foreach($invoice->getVATLines() as $vatType => $vatAmount)
+        @if ($vatAmount->isPositive())
         <tr>
-            <td colspan="5" style="text-align: right">PVN 21%:</td>
-            <td style="text-align: center;">{{ Money::defaultFormat($invoice->getTotalVAT()) }}</td>
+            <td colspan="5" style="text-align: right">{{ __('invoice.sum_vat') }} {{ $vatType  }}%:</td>
+            <td style="text-align: center;">{{ Money::defaultFormat($vatAmount) }}</td>
         </tr>
-    @endif
+        @endif
+    @endforeach
 
     <tr>
-        <th colspan="5" style="text-align: right">Summa apmaksai:</th>
+        <th colspan="5" style="text-align: right">{{ __('invoice.sum_to_pay') }}:</th>
         <th style="text-align: center;">{{ Money::defaultFormat($invoice->getTotalWithVatAndTax()) }}</th>
     </tr>
 
 </table>
 
 <div style="font-size: 12px; margin-top: 20px; margin-bottom: 50px">
-    Summa apmaksai vārdiem: {!! $totalAsText !!}
+    {{ __('invoice.sum_as_text') }}: {!! $totalAsText !!}
 </div>
 
 <div style="float: left; width:70%;">
     <div style="font-size: 12px;">
-        Rēķinu izrakstīja: {{ $invoice->createdByUser->name }}
+        {{ __('invoice.invoice_created_by') }}: {{ $invoice->createdByUser->name }}
     </div>
     <div style="font-size: 12px; margin-top: 20px">
-        Datums: {{ $invoice->date->format('d.m.Y') }}
+        {{ __('invoice.invoice_date') }}: {{ $invoice->date->format('d.m.Y') }}
     </div>
 </div>
 

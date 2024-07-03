@@ -114,14 +114,16 @@ class Invoice extends Model
         return Money::EUR($this->dept_amount ?? 0);
     }
 
-    // TODO: Display in Invoice for each PVN group
-    public function getVATLines(): Collection
+    public function getVATLines(): \Illuminate\Support\Collection
     {
         return $this
             ->lines
             ->groupBy(fn(InvoiceLine $line) => $line->vat)
-            ->map(fn(\Illuminate\Support\Collection $group) => $group->sum(fn(InvoiceLine $line) => (float)$line->vat_total->getAmount()))
-            ->map(fn(float $sum) => Money::EUR((int)$sum));
+            ->mapWithKeys(function(\Illuminate\Support\Collection $group) {
+                return [
+                    $group->first()->vat =>  Money::EUR($group->sum(fn(InvoiceLine $line) => (int)$line->vat_total->getAmount()))
+                ];
+            });
     }
 
     public function getTotalVAT(): Money
