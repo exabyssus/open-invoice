@@ -8,6 +8,8 @@ enum Units
     case SERVICE;
     case HOUR;
     case YEAR;
+    case MONTH;
+    case QUARTER;
     case UNIT;
     case KILO;
     case METER;
@@ -19,6 +21,8 @@ enum Units
             self::SERVICE,
             self::UNIT,
             self::HOUR,
+            self::MONTH,
+            self::QUARTER,
             self::YEAR,
             self::KILO,
             self::METER,
