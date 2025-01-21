@@ -36,7 +36,7 @@ class InvoiceLine extends Model
 
     public function getTotalAttribute(): Money
     {
-        return Money::EUR($this->quantity * $this->price->getAmount());
+        return Money::EUR(int)round($this->quantity * $this->price->getAmount()));
     }
 
     public function getVatTotalAttribute(): Money
