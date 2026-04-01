@@ -18,6 +18,7 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cube';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {
@@ -78,11 +79,11 @@ class ProductResource extends Resource
 
     public static function getLabel(): string
     {
-        return 'Product';
+        return __('pages.products.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Products';
+        return __('pages.products.plural');
     }
 }

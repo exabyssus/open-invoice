@@ -49,12 +49,12 @@ class LatestInvoices extends TableWidget
             ])
             ->headerActions([
                 Actions\Action::make('viewAll')
-                    ->label('Visi rēķini')
+                    ->label(__('pages.dashboard.all_invoices'))
                     ->url(InvoiceResource::getUrl('index', ['tenant' => $tenant]))
                     ->icon('heroicon-o-rectangle-stack')
                     ->color('gray'),
                 Actions\Action::make('createInvoice')
-                    ->label('Jauns rēķins')
+                    ->label(__('pages.dashboard.new_invoice'))
                     ->url(InvoiceResource::getUrl('create', ['tenant' => $tenant]))
                     ->icon('heroicon-o-plus'),
             ]);

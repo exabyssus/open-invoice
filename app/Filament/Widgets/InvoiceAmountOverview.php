@@ -8,7 +8,10 @@ use Filament\Widgets\ChartWidget;
 
 class InvoiceAmountOverview extends ChartWidget
 {
-    protected ?string $heading = 'Invoiced Amount';
+    public function getHeading(): ?string
+    {
+        return __('pages.dashboard.invoiced_amount');
+    }
 
     protected ?string $maxHeight = '200px';
 
@@ -38,12 +41,12 @@ class InvoiceAmountOverview extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Paid',
+                    'label' => __('pages.dashboard.paid'),
                     'data' => $paidData->values(),
                     'backgroundColor' => '#10b981',
                 ],
                 [
-                    'label' => 'Unpaid',
+                    'label' => __('pages.dashboard.unpaid_label'),
                     'data' => $unpaidData->values(),
                     'backgroundColor' => '#f59e0b',
                 ],

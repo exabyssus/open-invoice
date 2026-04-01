@@ -32,7 +32,8 @@ class InvoiceResource extends Resource
     protected static ?string $model = Invoice::class;
 
     protected static ?string $label = '';
-    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -103,10 +104,10 @@ class InvoiceResource extends Resource
                                     ->suffixAction(
                                         \Filament\Actions\Action::make('selectProduct')
                                             ->icon('heroicon-o-cube')
-                                            ->tooltip('Choose product')
+                                            ->tooltip(__('pages.product.choose'))
                                             ->form([
                                                 Select::make('product_id')
-                                                    ->label('Product')
+                                                    ->label(__('pages.products.singular'))
                                                     ->options(fn () => Product::query()->get()->mapWithKeys(fn (Product $p) => [$p->id => $p->getDisplayName()]))
                                                     ->searchable()
                                                     ->required(),

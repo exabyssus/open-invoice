@@ -40,6 +40,8 @@ return [
         'comment' => 'Komentārs',
         'is_paid' => 'Apmaksāts',
         'amount_total' => 'Summa kopā',
+        'mark_paid' => 'Atzīmēt kā apmaksātu',
+        'mark_unpaid' => 'Atzīmēt kā neapmaksātu',
     ],
     'invoice_line' => [
         'title' => 'Nosaukums',
@@ -47,5 +49,12 @@ return [
         'vat' => 'PVN',
         'quantity' => 'Daudzums',
         'unit' => 'Vienība',
-    ]
+    ],
+    'product' => [
+        'name' => 'Nosaukums',
+        'product_number' => 'Produkta nr.',
+        'price' => 'Cena',
+        'default_quantity' => 'Noklusētais daudzums',
+        'unit' => 'Vienība',
+    ],
 ];

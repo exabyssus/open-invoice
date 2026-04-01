@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use BackedEnum;
-use App\Filament\Widgets\InvoiceAmountOverview;
 use App\Filament\Widgets\InvoicesByClientChart;
 use App\Filament\Widgets\InvoiceStatusOverview;
 use App\Filament\Widgets\LatestInvoices;
@@ -11,19 +10,24 @@ use Filament\Pages\Dashboard as FilamentDashboard;
 
 class Dashboard extends FilamentDashboard
 {
-    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-arrow-trending-up';
+    protected static bool $shouldRegisterNavigation = false;
 
     public function getColumns(): int|array
     {
-        return 3;
+        return 2;
     }
 
     public function getWidgets(): array
     {
         return [
             InvoiceStatusOverview::make(),
-            InvoiceAmountOverview::make(),
             InvoicesByClientChart::make(),
+        ];
+    }
+
+    public function getFooterWidgets(): array
+    {
+        return [
             LatestInvoices::make(),
         ];
     }

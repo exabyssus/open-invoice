@@ -24,7 +24,11 @@ class MemberResource extends Resource
     protected static ?string $model = User::class;
     protected static bool $isScopedToTenant = false;
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-user-group';
-    protected static string|\UnitEnum|null $navigationGroup = 'Iestatījumi';
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('pages.settings');
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -44,14 +48,14 @@ class MemberResource extends Resource
                 Tables\Columns\TextColumn::make('role')
                     ->state(function (User $record) use ($tenant) {
                         if ($tenant->owner_id === $record->id) {
-                            return 'Owner';
+                            return __('pages.members.owner');
                         }
-                        return 'Member';
+                        return __('pages.members.member');
                     }),
             ])
             ->actions([
                 Actions\Action::make('remove')
-                    ->label('Remove')
+                    ->label(__('pages.members.remove'))
                     ->icon('heroicon-o-x-mark')
                     ->color('danger')
                     ->requiresConfirmation()
@@ -62,29 +66,26 @@ class MemberResource extends Resource
             ])
             ->headerActions([
                 Actions\Action::make('invite')
-                    ->label('Invite')
+                    ->label(__('pages.members.invite'))
                     ->icon('heroicon-o-envelope')
                     ->visible($isOwner)
                     ->form([
                         TextInput::make('email')
-                            ->label('Email')
+                            ->label(__('pages.members.email'))
                             ->email()
                             ->required(),
                     ])
                     ->action(function (array $data) use ($tenant) {
                         $email = $data['email'];
 
-                        // Check if already a member
                         if ($tenant->users()->where('email', $email)->exists()) {
                             Notification::make()
                                 ->warning()
-                                ->title('Already a member')
-                                ->body("{$email} is already a member of this company.")
+                                ->title(__('pages.members.already_member', ['email' => $email]))
                                 ->send();
                             return;
                         }
 
-                        // Check if invitation already pending
                         $existing = $tenant->invitations()
                             ->forEmail($email)
                             ->pending()
@@ -93,8 +94,7 @@ class MemberResource extends Resource
                         if ($existing) {
                             Notification::make()
                                 ->warning()
-                                ->title('Invitation already sent')
-                                ->body("A pending invitation for {$email} already exists.")
+                                ->title(__('pages.members.invitation_already_sent', ['email' => $email]))
                                 ->send();
                             return;
                         }
@@ -105,7 +105,6 @@ class MemberResource extends Resource
                             'token' => Str::random(64),
                         ]);
 
-                        // Send notification
                         $user = User::where('email', $email)->first();
                         if ($user) {
                             $user->notify(new CompanyInvitationNotification($invitation));
@@ -116,8 +115,7 @@ class MemberResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('Invitation sent')
-                            ->body("Invitation sent to {$email}")
+                            ->title(__('pages.members.invitation_sent', ['email' => $email]))
                             ->send();
                     }),
             ]);
@@ -132,12 +130,12 @@ class MemberResource extends Resource
 
     public static function getLabel(): string
     {
-        return 'Member';
+        return __('pages.members.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Members';
+        return __('pages.members.plural');
     }
 
     public static function getSlug(?\Filament\Panel $panel = null): string

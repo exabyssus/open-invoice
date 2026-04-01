@@ -6,7 +6,6 @@ use App\Filament\Pages\CreateUser;
 use App\Filament\Pages\EditUser;
 use App\Filament\Pages\ListUsers;
 use App\Models\User;
-use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
@@ -19,7 +18,11 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
     protected static bool $isScopedToTenant = false;
-    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('pages.admin');
+    }
 
     public static function canAccess(): bool
     {
@@ -35,7 +38,7 @@ class UserResource extends Resource
                 TextInput::make('email')->required(),
                 TextInput::make('password')->password(),
                 Toggle::make('is_super_admin')
-                    ->label('Super Admin')
+                    ->label(__('pages.users.singular') . ' (Admin)')
                     ->inline(false),
             ]);
     }
@@ -51,12 +54,12 @@ class UserResource extends Resource
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('companies_count')
                     ->counts('companies')
-                    ->label('Companies'),
+                    ->label(__('pages.companies.plural')),
             ])
             ->actions([
                 Actions\EditAction::make(),
                 Actions\Action::make('impersonate')
-                    ->label('Impersonate')
+                    ->label(__('pages.impersonate.label'))
                     ->icon('heroicon-o-finger-print')
                     ->color('gray')
                     ->hidden(fn (User $record) => $record->id === auth()->id())
@@ -80,11 +83,11 @@ class UserResource extends Resource
 
     public static function getLabel(): string
     {
-        return 'User';
+        return __('pages.users.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Users';
+        return __('pages.users.plural');
     }
 }

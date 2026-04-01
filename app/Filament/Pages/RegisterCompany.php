@@ -12,7 +12,7 @@ class RegisterCompany extends RegisterTenant
 {
     public static function getLabel(): string
     {
-        return 'Create Company';
+        return __('pages.register_company');
     }
 
     public function form(Schema $schema): Schema

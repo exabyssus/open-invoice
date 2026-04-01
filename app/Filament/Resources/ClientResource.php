@@ -19,6 +19,7 @@ class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-user';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

@@ -3,30 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class ImpersonateController extends Controller
 {
     public function start(User $user)
     {
         abort_unless(Auth::user()->isSuperAdmin(), 403);
-        abort_if(session()->has('impersonator_id'), 403, 'Already impersonating.');
+        abort_if(Session::has('impersonator_id'), 403, 'Already impersonating.');
 
-        session()->put('impersonator_id', Auth::id());
+        $impersonatorId = Auth::id();
 
-        Auth::login($user);
+        Auth::guard('web')->login($user);
+
+        // Re-set after login (login regenerates session)
+        Session::put('impersonator_id', $impersonatorId);
 
         return redirect('/panel');
     }
 
     public function stop()
     {
-        $impersonatorId = session()->pull('impersonator_id');
+        $impersonatorId = Session::pull('impersonator_id');
 
         abort_unless($impersonatorId, 403);
 
-        Auth::login(User::findOrFail($impersonatorId));
+        Auth::guard('web')->login(User::findOrFail($impersonatorId));
 
         return redirect('/panel');
     }

@@ -21,7 +21,11 @@ class CompanyResource extends Resource
     protected static ?string $model = Company::class;
     protected static bool $isScopedToTenant = false;
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-building-office';
-    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
+
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('pages.admin');
+    }
 
     public static function canAccess(): bool
     {
@@ -37,7 +41,7 @@ class CompanyResource extends Resource
                     ->relationship('owner', 'name')
                     ->searchable()
                     ->preload()
-                    ->label('Owner')
+                    ->label(__('pages.company_profile.owner'))
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->columnSpanFull()
@@ -60,10 +64,10 @@ class CompanyResource extends Resource
                     TextInput::make('number_prefix'),
                     Select::make('number_style')
                         ->options([
-                            NumberStyles::NUMBER_STYLE_YEARLY->name => 'Yearly',
-                            NumberStyles::NUMBER_STYLE_ALL_TIME->name => 'All time',
-                            NumberStyles::NUMBER_STYLE_DATE->name => 'Date',
-                            NumberStyles::NUMBER_STYLE_NONE->name => 'None',
+                            NumberStyles::NUMBER_STYLE_YEARLY->name => __('resources.company.number_style_yearly'),
+                            NumberStyles::NUMBER_STYLE_ALL_TIME->name => __('resources.company.number_style_all_time'),
+                            NumberStyles::NUMBER_STYLE_DATE->name => __('resources.company.number_style_date'),
+                            NumberStyles::NUMBER_STYLE_NONE->name => __('resources.company.number_style_none'),
                         ]),
                     TextInput::make('number_suffix'),
                 ])
@@ -83,15 +87,15 @@ class CompanyResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')->searchable(),
                 Tables\Columns\TextColumn::make('owner.name')
-                    ->label('Owner')
+                    ->label(__('pages.company_profile.owner'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('registration_number'),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts('users')
-                    ->label('Users'),
+                    ->label(__('pages.users.plural')),
                 Tables\Columns\TextColumn::make('invoices_count')
                     ->counts('invoices')
-                    ->label('Invoices'),
+                    ->label(__('pages.invoices.plural')),
             ])
             ->actions([
                 Actions\EditAction::make(),
@@ -114,11 +118,11 @@ class CompanyResource extends Resource
 
     public static function getLabel(): string
     {
-        return 'Company';
+        return __('pages.companies.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Companies';
+        return __('pages.companies.plural');
     }
 }

@@ -5,31 +5,42 @@ namespace App\Filament\Widgets;
 use App\Models\Invoice;
 use App\Support\Money;
 use Filament\Facades\Filament;
-use Filament\Widgets\Widget;
+use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class InvoiceStatusOverview extends Widget
+class InvoiceStatusOverview extends StatsOverviewWidget
 {
-    protected string $view = 'filament.widgets.invoice-status-overview';
-
     protected int|string|array $columnSpan = 1;
 
-    public function getOutstandingAmount(): string
+    protected function getStats(): array
     {
-        $unpaid = Filament::getTenant()
-            ->invoices()
-            ->where('is_paid', false)
-            ->get();
+        $tenant = Filament::getTenant();
 
-        $amount = $unpaid->sum(fn (Invoice $i) => (int) $i->getTotalWithVatAndTax()->getAmount());
+        $unpaid = $tenant->invoices()->where('is_paid', false)->get();
+        $outstandingAmount = $unpaid->sum(fn (Invoice $i) => (int) $i->getTotalWithVatAndTax()->getAmount());
 
-        return Money::defaultFormat(\Money\Money::EUR($amount));
-    }
+        $monthlyData = collect(range(11, 0))->map(function ($monthsAgo) use ($tenant) {
+            $start = now()->subMonths($monthsAgo)->startOfMonth();
+            $end = now()->subMonths($monthsAgo)->endOfMonth();
 
-    public function getUnpaidCount(): int
-    {
-        return Filament::getTenant()
-            ->invoices()
-            ->where('is_paid', false)
-            ->count();
+            return $tenant->invoices()
+                ->where('is_paid', true)
+                ->whereBetween('created_at', [$start, $end])
+                ->get()
+                ->sum(fn (Invoice $i) => (int) $i->getTotalWithVatAndTax()->getAmount());
+        });
+
+        $incomeTotal = $monthlyData->sum();
+        $chartData = $monthlyData->map(fn ($v) => $v / 100)->values()->toArray();
+
+        return [
+            Stat::make(__('pages.dashboard.income_12_months'), Money::defaultFormat(\Money\Money::EUR($incomeTotal)))
+                ->description(__('pages.dashboard.paid_invoices'))
+                ->chart($chartData)
+                ->chartColor('success'),
+            Stat::make(__('pages.dashboard.outstanding'), Money::defaultFormat(\Money\Money::EUR($outstandingAmount)))
+                ->description(__('pages.dashboard.unpaid', ['count' => $unpaid->count()]))
+                ->color('warning'),
+        ];
     }
 }

@@ -28,18 +28,18 @@ class PendingInvitationsWidget extends TableWidget
                     ->where('company_id', $tenant->id)
                     ->pending()
             )
-            ->heading('Pending Invitations')
+            ->heading(__('pages.pending_invitations.heading'))
             ->paginated(false)
-            ->emptyStateHeading('No pending invitations')
+            ->emptyStateHeading(__('pages.pending_invitations.empty'))
             ->columns([
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Sent')
+                    ->label(__('pages.pending_invitations.sent'))
                     ->since(),
             ])
             ->actions([
                 Actions\Action::make('resend')
-                    ->label('Resend')
+                    ->label(__('pages.pending_invitations.resend'))
                     ->icon('heroicon-o-arrow-path')
                     ->visible($isOwner)
                     ->action(function (CompanyInvitation $record) {
@@ -55,12 +55,11 @@ class PendingInvitationsWidget extends TableWidget
 
                         Notification::make()
                             ->success()
-                            ->title('Invitation resent')
-                            ->body("Invitation resent to {$record->email}")
+                            ->title(__('pages.pending_invitations.resent', ['email' => $record->email]))
                             ->send();
                     }),
                 Actions\Action::make('cancel')
-                    ->label('Cancel')
+                    ->label(__('pages.pending_invitations.cancel'))
                     ->icon('heroicon-o-x-mark')
                     ->color('danger')
                     ->visible($isOwner)

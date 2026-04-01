@@ -20,12 +20,12 @@ class CompanyProfile extends EditTenantProfile
     {
         return [
             Action::make('deleteCompany')
-                ->label('Delete Company')
+                ->label(__('pages.company_profile.delete'))
                 ->color('danger')
                 ->icon('heroicon-o-trash')
                 ->requiresConfirmation()
-                ->modalHeading('Delete Company')
-                ->modalDescription('Are you sure you want to delete this company? All invoices, clients, and data will be permanently removed. This action cannot be undone.')
+                ->modalHeading(__('pages.company_profile.delete_heading'))
+                ->modalDescription(__('pages.company_profile.delete_description'))
                 ->visible(fn () => Filament::getTenant()->isOwnedBy(auth()->user()))
                 ->action(function () {
                     $tenant = Filament::getTenant();
@@ -46,8 +46,8 @@ class CompanyProfile extends EditTenantProfile
             ->columns(2)
             ->schema([
                 Placeholder::make('owner')
-                    ->label('Owner')
-                    ->content(fn () => Filament::getTenant()->owner?->name ?? 'No owner')
+                    ->label(__('pages.company_profile.owner'))
+                    ->content(fn () => Filament::getTenant()->owner?->name ?? __('pages.company_profile.no_owner'))
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->columnSpanFull()

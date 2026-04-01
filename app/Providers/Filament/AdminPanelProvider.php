@@ -53,10 +53,12 @@ class AdminPanelProvider extends PanelProvider
                 }
                 $name = auth()->user()?->name ?? 'user';
                 $stopUrl = route('impersonate.stop');
+                $bannerText = __('pages.impersonate.banner', ['name' => $name]);
+                $stopText = __('pages.impersonate.stop');
                 return new \Illuminate\Support\HtmlString("
                     <div style='background:#f59e0b;color:#000;text-align:center;padding:8px 16px;font-size:14px;font-weight:500;'>
-                        You are impersonating <strong>{$name}</strong>.
-                        <a href=\"{$stopUrl}\" style='color:#000;text-decoration:underline;margin-left:8px;'>Stop impersonating</a>
+                        {$bannerText}
+                        <a href=\"{$stopUrl}\" style='color:#000;text-decoration:underline;margin-left:8px;'>{$stopText}</a>
                     </div>
                 ");
             })
@@ -71,7 +73,8 @@ class AdminPanelProvider extends PanelProvider
                  ->url(fn() => CompanyProfile::getUrl())
                  ->label(fn() => CompanyProfile::getLabel())
                  ->isActiveWhen(fn (): bool => request()->routeIs('filament.panel.tenant.profile'))
-                 ->group('Iestatījumi')
+                 ->group(__('pages.settings'))
+                 ->icon('heroicon-o-cog-6-tooth')
             ])
             ->tenant(Company::class)
             ->tenantRegistration(RegisterCompany::class)
