@@ -2,18 +2,14 @@
 
 namespace App\Models;
 
-use Attribute;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Money\Money;
-use PHPUnit\Event\Runtime\PHP;
 
 /**
  * @property string title
  * @property int quantity
- * @property Money price
- * @property Money total
- * @property Money vat_total
  * @property ?int vat
  * @property string unit
  */
@@ -29,14 +25,14 @@ class InvoiceLine extends Model
         'unit',
     ];
 
-    public function getPriceAttribute(): Money
+    public function getMoneyPrice(): Money
     {
-        return Money::EUR($this->attributes['price']);
+        return Money::EUR($this->attributes['price'] ?? 0);
     }
 
     public function getTotalAttribute(): Money
     {
-        return Money::EUR(int)round($this->quantity * $this->price->getAmount()));
+        return Money::EUR((int)round($this->quantity * ($this->attributes['price'] ?? 0)));
     }
 
     public function getVatTotalAttribute(): Money

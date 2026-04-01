@@ -43,6 +43,12 @@ class Client extends Model implements HasName
         static::addGlobalScope('team', static function (Builder $query) use ($tenant) {
             $query->whereBelongsTo($tenant);
         });
+
+        static::creating(static function ($model) {
+            if (! $model->company_id && Filament::getTenant()) {
+                $model->company_id = Filament::getTenant()->id;
+            }
+        });
     }
 
     public function getFilamentName(): string

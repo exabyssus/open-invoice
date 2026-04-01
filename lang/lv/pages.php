@@ -6,8 +6,8 @@ return [
     'filter_with_deleted' => 'Dzēstie',
 
     'users' => [
-        'plural' => 'Darbinieki',
-        'singular' => 'Darbinieks',
+        'plural' => 'Lietotāji',
+        'singular' => 'Lietotājs',
     ],
 
     'invoices' => [

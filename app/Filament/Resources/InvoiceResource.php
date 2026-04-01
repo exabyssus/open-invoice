@@ -8,19 +8,22 @@ use App\Filament\Pages\ListInvoices;
 use App\Filament\Pages\ViewInvoicePdf;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\Product;
+use BackedEnum;
 use App\Services\GenerateInvoiceNumber;
 use App\Support\Money;
 use App\Units;
 use App\Vat;
 use Filament\Facades\Filament;
+use Filament\Resources\Resource;
+use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -29,12 +32,12 @@ class InvoiceResource extends Resource
     protected static ?string $model = Invoice::class;
 
     protected static ?string $label = '';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
         $numberGenerator = new GenerateInvoiceNumber();
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('invoice_number')
                     ->label(__('resources.invoice.invoice_number'))
@@ -60,10 +63,12 @@ class InvoiceResource extends Resource
                     ->displayFormat('d/m/Y'),
                 TextInput::make('dept_amount')
                     ->label(__('resources.invoice.dept_amount'))
-                    ->formatStateUsing(fn($state) => $state / 100)
-                    ->mutateDehydratedStateUsing(fn($state) => (float)$state * 100)
-                    ->numeric()
-                    ->default(0)
+                    ->formatStateUsing(function ($state) {
+                        if (is_string($state) && str_contains($state, ',')) return $state;
+                        return number_format(((int) $state) / 100, 2, ',', '');
+                    })
+                    ->mutateDehydratedStateUsing(fn($state) => (int)round((float)str_replace(',', '.', $state) * 100))
+                    ->default('0,00')
                     ->required(),
                 Toggle::make('is_advance')
                     ->label(__('resources.invoice.advance'))
@@ -94,22 +99,46 @@ class InvoiceResource extends Resource
                                     ->label(__('resources.invoice_line.title'))
                                     ->columnSpan(2)
                                     ->required()
-                                    ->columns(4)
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->suffixAction(
+                                        \Filament\Actions\Action::make('selectProduct')
+                                            ->icon('heroicon-o-cube')
+                                            ->tooltip('Choose product')
+                                            ->form([
+                                                Select::make('product_id')
+                                                    ->label('Product')
+                                                    ->options(fn () => Product::query()->get()->mapWithKeys(fn (Product $p) => [$p->id => $p->getDisplayName()]))
+                                                    ->searchable()
+                                                    ->required(),
+                                            ])
+                                            ->action(function (array $data, \Filament\Schemas\Components\Utilities\Set $set) {
+                                                $product = Product::find($data['product_id']);
+                                                if (! $product) return;
+
+                                                $title = $product->product_number
+                                                    ? "{$product->name} ({$product->product_number})"
+                                                    : $product->name;
+
+                                                $set('title', $title);
+                                                $set('price', number_format($product->price / 100, 2, ',', ''));
+                                                $set('quantity', str_replace('.', ',', (string) $product->default_quantity));
+                                                $set('unit', $product->unit);
+                                            })
+                                    ),
                                 TextInput::make('price')
                                     ->label(__('resources.invoice_line.price'))
-                                    ->formatStateUsing(fn(\Money\Money|null $state) => $state?->getAmount() / 100)
-                                    ->mutateDehydratedStateUsing(fn($state) => (float)$state * 100)
-                                    ->required()
-                                    ->numeric('decimal'),
+                                    ->formatStateUsing(fn($state) => $state ? number_format($state / 100, 2, ',', '') : null)
+                                    ->mutateDehydratedStateUsing(fn($state) => (int)round((float)str_replace(',', '.', $state) * 100))
+                                    ->required(),
                                 Select::make('unit')
                                     ->label(__('resources.invoice_line.unit'))
                                     ->required()
                                     ->options(Units::asOptions()),
                                 TextInput::make('quantity')
                                     ->label(__('resources.invoice_line.quantity'))
-                                    ->required()
-                                    ->numeric('integer'),
+                                    ->formatStateUsing(fn($state) => $state ? str_replace('.', ',', $state) : null)
+                                    ->mutateDehydratedStateUsing(fn($state) => (float)str_replace(',', '.', $state))
+                                    ->required(),
                                 Select::make('vat')
                                     ->label(__('resources.invoice_line.vat'))
                                     ->visible(fn() => Filament::getTenant()->vat_number !== null)
@@ -117,6 +146,7 @@ class InvoiceResource extends Resource
                                     ->options(Vat::asOptions())->default(Vat::VAT_21),
                             ];
                         })->columns(Filament::getTenant()->vat_number ? 6 : 5)
+                            ->columnSpanFull()
                     ])->columnSpanFull()
             ]);
     }
@@ -131,7 +161,7 @@ class InvoiceResource extends Resource
 
         return $table
             ->defaultSort('created_at', 'desc')
-            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
+            ->filtersLayout(Tables\Enums\FiltersLayout::Dropdown)
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_number')->label(__('resources.invoice.invoice_number')),
                 Tables\Columns\TextColumn::make('client_id')
@@ -139,7 +169,14 @@ class InvoiceResource extends Resource
                     ->label(__('resources.invoice.client')),
                 Tables\Columns\IconColumn::make('is_paid')
                     ->alignCenter()
-                    ->label(__('resources.invoice.is_paid')),
+                    ->label(__('resources.invoice.is_paid'))
+                    ->action(
+                        Actions\Action::make('markPaid')
+                            ->requiresConfirmation()
+                            ->modalHeading(__('resources.invoice.mark_paid'))
+                            ->hidden(fn (Invoice $record) => $record->is_paid)
+                            ->action(fn (Invoice $record) => $record->update(['is_paid' => true]))
+                    ),
                 Tables\Columns\TextColumn::make('amount')
                     ->label(__('resources.invoice.amount_total'))
                     ->state(function (Invoice $invoice): string {
@@ -164,7 +201,7 @@ class InvoiceResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
+                Actions\Action::make('view')
                     ->icon('heroicon-m-magnifying-glass')
                     ->url(fn (Invoice $record): string => route('filament.panel.resources.invoices.pdf', [
                         'tenant' => $tenant,
@@ -173,7 +210,7 @@ class InvoiceResource extends Resource
                     ]))
                     ->label(__('pages.invoices.view'))
                     ->openUrlInNewTab(),
-                Tables\Actions\Action::make('download')
+                Actions\Action::make('download')
                     ->icon('heroicon-m-arrow-down-tray')
                     ->url(fn (Invoice $record): string => route('filament.panel.resources.invoices.pdf', [
                         'tenant' => $tenant,
@@ -182,12 +219,12 @@ class InvoiceResource extends Resource
                     ]))
                     ->label(__('pages.invoices.download'))
                     ->openUrlInNewTab(),
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -204,7 +241,7 @@ class InvoiceResource extends Resource
                     TextInput::make('registration_number')->label(__('resources.client.registration_number')),
                     TextInput::make('vat_number')->label(__('resources.client.vat_number')),
                 ];
-            })->columns(2),
+            })->columns(2)->columnSpanFull(),
 
             TextInput::make('address')->label(__('resources.client.address')),
 
@@ -214,7 +251,7 @@ class InvoiceResource extends Resource
                     TextInput::make('bank_swift')->label(__('resources.client.bank_swift')),
                     TextInput::make('bank_iban')->label(__('resources.client.bank_iban')),
                 ];
-            })->columns(3),
+            })->columns(3)->columnSpanFull(),
 
             TextInput::make('agreement_number')->label(__('resources.client.agreement_number'))
         ];

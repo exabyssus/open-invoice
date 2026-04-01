@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,5 +20,12 @@ class CompanyFactory extends Factory
             'address' => fake()->address(),
             'registration_number' => fake()->randomNumber(6),
         ];
+    }
+
+    public function ownedBy(User $user): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'owner_id' => $user->id,
+        ]);
     }
 }

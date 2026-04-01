@@ -5,34 +5,55 @@ namespace App\Filament\Widgets;
 use App\Models\Invoice;
 use Filament\Facades\Filament;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Collection;
 
 class InvoiceAmountOverview extends ChartWidget
 {
-    protected static ?string $heading = 'Rēķinu summas';
+    protected ?string $heading = 'Invoiced Amount';
 
-    protected static ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '200px';
+
+    protected int|string|array $columnSpan = 1;
 
     protected function getData(): array
     {
-        $data = Filament::getTenant()
-            ->invoices
-            ->groupBy(fn(Invoice $invoice) => $invoice->created_at->month)
-            ->map(fn(Collection $month) => $month->sum(fn (Invoice $invoice) => (int)$invoice->getTotalWithVatAndTax()->getAmount() / 100));
+        $months = collect(range(1, 12));
+
+        $invoices = Filament::getTenant()
+            ->invoices()
+            ->whereYear('created_at', now()->year)
+            ->get();
+
+        $paidData = $months->map(fn ($month) => $invoices
+            ->filter(fn (Invoice $i) => $i->created_at->month === $month && $i->is_paid)
+            ->sum(fn (Invoice $i) => (int) $i->getTotalWithVatAndTax()->getAmount()) / 100
+        );
+
+        $unpaidData = $months->map(fn ($month) => $invoices
+            ->filter(fn (Invoice $i) => $i->created_at->month === $month && ! $i->is_paid)
+            ->sum(fn (Invoice $i) => (int) $i->getTotalWithVatAndTax()->getAmount()) / 100
+        );
+
+        $labels = $months->map(fn ($m) => now()->setMonth($m)->translatedFormat('M'));
 
         return [
             'datasets' => [
                 [
-                    'label' => __('resources.invoices.plural'),
-                    'data' => $data->map(fn ($value, $key) => $value),
+                    'label' => 'Paid',
+                    'data' => $paidData->values(),
+                    'backgroundColor' => '#10b981',
+                ],
+                [
+                    'label' => 'Unpaid',
+                    'data' => $unpaidData->values(),
+                    'backgroundColor' => '#f59e0b',
                 ],
             ],
-            'labels' => $data->keys(),
+            'labels' => $labels->values(),
         ];
     }
 
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 }

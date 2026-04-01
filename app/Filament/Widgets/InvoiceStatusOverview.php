@@ -3,39 +3,33 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Invoice;
+use App\Support\Money;
 use Filament\Facades\Filament;
-use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Collection;
+use Filament\Widgets\Widget;
 
-class InvoiceStatusOverview extends ChartWidget
+class InvoiceStatusOverview extends Widget
 {
-    protected static ?string $heading = 'Apmaksāti';
-    protected static ?string $maxHeight = '255px';
+    protected string $view = 'filament.widgets.invoice-status-overview';
 
-    protected function getData(): array
+    protected int|string|array $columnSpan = 1;
+
+    public function getOutstandingAmount(): string
     {
-        $unpaid = Filament::getTenant()->invoices()->where('is_paid', 0)->count();
-        $paid = Filament::getTenant()->invoices()->where('is_paid', 1)->count();
+        $unpaid = Filament::getTenant()
+            ->invoices()
+            ->where('is_paid', false)
+            ->get();
 
-        return [
-            'datasets' => [
-                [
-                    'label' => __('resources.invoices.plural'),
-                    'data' => [
-                        $paid,
-                        $unpaid,
-                    ],
-                ],
-            ],
-            'labels' => [
-                'Paid',
-                'Unpaid',
-            ],
-        ];
+        $amount = $unpaid->sum(fn (Invoice $i) => (int) $i->getTotalWithVatAndTax()->getAmount());
+
+        return Money::defaultFormat(\Money\Money::EUR($amount));
     }
 
-    protected function getType(): string
+    public function getUnpaidCount(): int
     {
-        return 'pie';
+        return Filament::getTenant()
+            ->invoices()
+            ->where('is_paid', false)
+            ->count();
     }
 }

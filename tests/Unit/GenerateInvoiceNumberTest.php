@@ -10,9 +10,6 @@ beforeEach(function () {
     $this->currentCompany = Filament::getTenant();
 });
 
-afterEach(function () {
-    $this->currentCompany->invoices()->forceDelete();
-});
 
 it('adds suffix and prefix for all time style', function () use ($generator) {
 

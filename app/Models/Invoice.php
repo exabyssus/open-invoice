@@ -41,6 +41,9 @@ class Invoice extends Model
         static::creating(static function ($query) {
             $query->template = 'default';
             $query->created_by = auth()->user()->id;
+            if (! $query->company_id && Filament::getTenant()) {
+                $query->company_id = Filament::getTenant()->id;
+            }
         });
     }
 
@@ -53,12 +56,15 @@ class Invoice extends Model
         });
     }
 
-    protected $casts = [
-        'date' => 'immutable_datetime',
-        'due_date' => 'immutable_datetime',
-        'is_advance' => 'boolean',
-        'is_paid' => 'boolean'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'date' => 'immutable_datetime',
+            'due_date' => 'immutable_datetime',
+            'is_advance' => 'boolean',
+            'is_paid' => 'boolean',
+        ];
+    }
 
     protected $fillable = [
         'invoice_number',

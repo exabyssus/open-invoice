@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoice_lines', function (Blueprint $table) {
-            $table->double('quantity')->change();
+            $table->double('quantity')->default(1)->change();
         });
     }
 

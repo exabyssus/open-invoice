@@ -3,7 +3,6 @@
     /** @var $invoice \App\Models\Invoice */
     /** @var $company \App\Models\Company */
     /** @var $client \App\Models\Company */
-$client->contract_number = null;
 @endphp
 <html lang="lv">
 <head>
@@ -236,8 +235,8 @@ $client->contract_number = null;
             <td style="text-align: center">{{ $index + 1 }}</td>
             <td>{{ $line->title }}</td>
             <td style="text-align: center">{{ \App\Units::asOptions()[$line->unit] }}</td>
-            <td style="text-align: center">{{ $line->quantity }}</td>
-            <td style="text-align: center">{{ Money::defaultFormat($line->price) }}</td>
+            <td style="text-align: center">{{ str_replace('.', ',', $line->quantity) }}</td>
+            <td style="text-align: center">{{ Money::defaultFormat($line->getMoneyPrice()) }}</td>
             <td style="text-align: center">{{ Money::defaultFormat($line->total) }}</td>
         </tr>
     @endforeach

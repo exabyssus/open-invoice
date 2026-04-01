@@ -2,21 +2,29 @@
 
 namespace App\Filament\Pages;
 
+use BackedEnum;
 use App\Filament\Widgets\InvoiceAmountOverview;
+use App\Filament\Widgets\InvoicesByClientChart;
 use App\Filament\Widgets\InvoiceStatusOverview;
+use App\Filament\Widgets\LatestInvoices;
 use Filament\Pages\Dashboard as FilamentDashboard;
-use Filament\Widgets;
 
 class Dashboard extends FilamentDashboard
 {
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-arrow-trending-up';
+
+    public function getColumns(): int|array
+    {
+        return 3;
+    }
 
     public function getWidgets(): array
     {
         return [
-            InvoiceAmountOverview::make(),
             InvoiceStatusOverview::make(),
+            InvoiceAmountOverview::make(),
+            InvoicesByClientChart::make(),
+            LatestInvoices::make(),
         ];
     }
 }
-

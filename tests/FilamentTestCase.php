@@ -9,24 +9,19 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class FilamentTestCase extends BaseTestCase
 {
-    use CreatesApplication;
+    public Company $company;
+    public User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->company = Company::factory()->create();
         $this->user = User::factory()->create();
+        $this->company = Company::factory()->ownedBy($this->user)->create();
 
         $this->user->companies()->attach($this->company);
 
         $this->actingAs($this->user);
         Filament::setTenant($this->company);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->company->forceDelete();
-        $this->user->forceDelete();
     }
 }

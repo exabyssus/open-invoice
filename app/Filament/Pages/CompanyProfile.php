@@ -1,36 +1,54 @@
 <?php
 
 namespace App\Filament\Pages;
+
 use App\NumberStyles;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 
 class CompanyProfile extends EditTenantProfile
 {
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('deleteCompany')
+                ->label('Delete Company')
+                ->color('danger')
+                ->icon('heroicon-o-trash')
+                ->requiresConfirmation()
+                ->modalHeading('Delete Company')
+                ->modalDescription('Are you sure you want to delete this company? All invoices, clients, and data will be permanently removed. This action cannot be undone.')
+                ->visible(fn () => Filament::getTenant()->isOwnedBy(auth()->user()))
+                ->action(function () {
+                    $tenant = Filament::getTenant();
+
+                    $tenant->clients()->forceDelete();
+                    $tenant->invoices()->forceDelete();
+                    $tenant->users()->detach();
+                    $tenant->delete();
+
+                    return redirect('/panel');
+                }),
         ];
     }
 
-    public static function getRelations(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            \App\Filament\InvoiceLinesRelationManager::class
-        ];
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
+        return $schema
             ->columns(2)
             ->schema([
+                Placeholder::make('owner')
+                    ->label('Owner')
+                    ->content(fn () => Filament::getTenant()->owner?->name ?? 'No owner')
+                    ->columnSpanFull(),
                 TextInput::make('title')
                     ->columnSpanFull()
                     ->label(__('resources.company.title'))

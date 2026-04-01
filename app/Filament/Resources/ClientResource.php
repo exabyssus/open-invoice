@@ -6,21 +6,23 @@ use App\Filament\Pages\CreateClient;
 use App\Filament\Pages\EditClient;
 use App\Filament\Pages\ListClients;
 use App\Models\Client;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Actions;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-user';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(1)
             ->schema([
                 TextInput::make('title')
@@ -32,7 +34,7 @@ class ClientResource extends Resource
                         TextInput::make('registration_number')->label(__('resources.client.registration_number')),
                         TextInput::make('vat_number')->label(__('resources.client.vat_number')),
                     ];
-                })->columns(2),
+                })->columns(2)->columnSpanFull(),
 
                 TextInput::make('address')->label(__('resources.client.address')),
 
@@ -42,7 +44,7 @@ class ClientResource extends Resource
                         TextInput::make('bank_swift')->label(__('resources.client.bank_swift')),
                         TextInput::make('bank_iban')->label(__('resources.client.bank_iban')),
                     ];
-                })->columns(3),
+                })->columns(3)->columnSpanFull(),
 
                 TextInput::make('agreement_number')->label(__('resources.client.agreement_number'))
             ]);
@@ -59,11 +61,11 @@ class ClientResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
