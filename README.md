@@ -4,7 +4,7 @@ Multi-tenant invoice management system built with Laravel 13 and Filament 5.
 
 ## Requirements
 
-- PHP 8.3+
+- PHP 8.5+
 - Composer
 - Node.js & npm
 
