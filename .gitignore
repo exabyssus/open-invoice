@@ -24,3 +24,4 @@ yarn-error.log
 /public/js/filament
 /public/fonts/filament
 /storage/fonts
+.DS_Store
