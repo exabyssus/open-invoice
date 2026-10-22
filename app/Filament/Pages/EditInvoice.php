@@ -40,6 +40,12 @@ class EditInvoice extends EditRecord
         ];
     }
 
+    protected function afterSave(): void
+    {
+        // the old system's PDF no longer matches an edited invoice
+        $this->getRecord()->forceFill(['legacy_pdf' => null])->saveQuietly();
+    }
+
     public function getHeading(): string|Htmlable
     {
         return __('pages.action_edit', ['name' => $this->getRecord()->invoice_number]);

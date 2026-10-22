@@ -9,6 +9,7 @@ use Filament\Pages\BasePage;
 use Filament\Resources\Pages\PageRegistration;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ViewInvoicePdf extends BasePage
@@ -25,6 +26,12 @@ class ViewInvoicePdf extends BasePage
                 $filename = Str::slug($invoice->invoice_number . '-' . $invoice->client->title);
 
                 return response()->stream(function () use ($invoice) {
+                    // imported invoices keep the PDF that was issued by the old system until they are edited
+                    if ($invoice->legacy_pdf && Storage::disk('private')->exists($invoice->legacy_pdf)) {
+                        echo Storage::disk('private')->get($invoice->legacy_pdf);
+
+                        return;
+                    }
                     /** @var GenerateInvoicePdf $generator */
                     $generator = app(GenerateInvoicePdf::class);
                     echo $generator($invoice)->content();

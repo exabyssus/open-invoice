@@ -46,3 +46,9 @@ it('sends an existing user back to the invitation after login', function () {
 
     expect(session('url.intended'))->toBe(route('invitation.accept', $invitation->token));
 });
+
+it('sends a session that outlived a password change to the login page', function () {
+    $this->withSession(['password_hash_web' => 'hash-from-before-the-change'])
+        ->get('/panel/' . $this->company->id)
+        ->assertRedirect('/panel/login');
+});

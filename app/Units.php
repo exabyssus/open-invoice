@@ -10,6 +10,7 @@ enum Units
     case YEAR;
     case MONTH;
     case QUARTER;
+    case HALF_YEAR;
     case UNIT;
     case KILO;
     case METER;
@@ -23,6 +24,7 @@ enum Units
             self::HOUR,
             self::MONTH,
             self::QUARTER,
+            self::HALF_YEAR,
             self::YEAR,
             self::KILO,
             self::METER,

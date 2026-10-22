@@ -3,6 +3,7 @@
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Services\GenerateInvoicePdf;
+use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->client = Client::factory()->create([
@@ -107,4 +108,22 @@ it('generates a PDF for an old invoice without creator and with a line without V
     }
 
     expect($response->getContent())->toStartWith('%PDF');
+});
+
+it('serves the PDF issued by the old system for an imported invoice', function () {
+    Storage::fake('private');
+    Storage::disk('private')->put('legacy-pdfs/sia_agw/original.pdf', '%PDF-original');
+    $this->invoice->forceFill(['legacy_pdf' => 'legacy-pdfs/sia_agw/original.pdf'])->save();
+
+    $response = $this->get(route('filament.panel.resources.invoices.pdf', [
+        'tenant' => $this->company,
+        'record' => $this->invoice,
+        'method' => 'inline',
+    ]));
+
+    expect($response->streamedContent())->toBe('%PDF-original');
+});
+
+it('offers a half-year unit', function () {
+    expect(\App\Units::asOptions())->toHaveKey('HALF_YEAR')->and(\App\Units::asOptions()['HALF_YEAR'])->toBe('Pusgads');
 });
