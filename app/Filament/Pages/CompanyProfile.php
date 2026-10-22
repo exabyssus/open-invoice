@@ -80,6 +80,7 @@ class CompanyProfile extends EditTenantProfile
                                 NumberStyles::NUMBER_STYLE_YEARLY->name => __('resources.company.number_style_yearly'),
                                 NumberStyles::NUMBER_STYLE_ALL_TIME->name => __('resources.company.number_style_all_time'),
                                 NumberStyles::NUMBER_STYLE_DATE->name => __('resources.company.number_style_date'),
+                                NumberStyles::NUMBER_STYLE_DATE_SHORT->name => __('resources.company.number_style_date_short'),
                                 NumberStyles::NUMBER_STYLE_NONE->name => __('resources.company.number_style_none'),
                             ]),
                         TextInput::make('number_suffix')->label(__('resources.company.number_suffix')),

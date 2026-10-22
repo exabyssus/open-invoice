@@ -17,6 +17,7 @@ return [
         'number_style_yearly' => 'Nummurs pēc kārtas (gadā)',
         'number_style_all_time' => 'Nummurs pēc kārtas',
         'number_style_date' => 'Datums',
+        'number_style_date_short' => 'Datums DDMMGG- (turpinājums jāieraksta)',
         'number_style_none' => 'Brīvi ievadāms',
     ],
     'client' => [

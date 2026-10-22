@@ -118,3 +118,16 @@ it('does not reuse the number of a deleted invoice on "all time" style', functio
 
     expect($generator($this->currentCompany))->toBe('4');
 });
+
+it('starts with DDMMYY- in "date short" style and leaves the rest to be typed', function () use ($generator) {
+
+    $this->currentCompany->fill([
+        'number_style' => NumberStyles::NUMBER_STYLE_DATE_SHORT->name,
+        'number_prefix' => '',
+        'number_suffix' => ''
+    ]);
+
+    \Carbon\Carbon::setTestNow(\Illuminate\Support\Carbon::create(2026, 10, 16));
+
+    expect($generator($this->currentCompany))->toBe('161026-');
+});

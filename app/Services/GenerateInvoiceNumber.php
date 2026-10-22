@@ -16,6 +16,7 @@ class GenerateInvoiceNumber
             NumberStyles::NUMBER_STYLE_YEARLY => $this->yearly($company),
             NumberStyles::NUMBER_STYLE_ALL_TIME => $this->allTime($company),
             NumberStyles::NUMBER_STYLE_DATE => $this->date($company),
+            NumberStyles::NUMBER_STYLE_DATE_SHORT => $this->dateShort($company),
             default => '',
         };
     }
@@ -35,6 +36,12 @@ class GenerateInvoiceNumber
     {
         $number = $company->invoices()->withTrashed()->count() + 1;
         return sprintf('%s%s%s', $company->number_prefix, $number, $company->number_suffix);
+    }
+
+    // DDMMYY- and the rest (a client code, say) is typed by hand
+    private function dateShort(Company $company): string
+    {
+        return sprintf('%s%s-%s', $company->number_prefix, Carbon::now()->format('dmy'), $company->number_suffix);
     }
 
     private function date(Company $company): string
