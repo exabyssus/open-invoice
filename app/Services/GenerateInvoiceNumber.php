@@ -24,6 +24,7 @@ class GenerateInvoiceNumber
     {
         $number = $company
                 ->invoices()
+                ->withTrashed()
                 ->where('created_at', '>', Carbon::now()->startOfYear())
                 ->count() + 1;
 
@@ -32,7 +33,7 @@ class GenerateInvoiceNumber
 
     private function allTime(Company $company): string
     {
-        $number = $company->invoices()->count() + 1;
+        $number = $company->invoices()->withTrashed()->count() + 1;
         return sprintf('%s%s%s', $company->number_prefix, $number, $company->number_suffix);
     }
 

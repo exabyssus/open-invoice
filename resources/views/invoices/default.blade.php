@@ -84,7 +84,7 @@
         </td>
         <td width="50%" style="text-align: right;">
             <h2>
-                <span style="color: #666;">@if($invoice->advance)
+                <span style="color: #666;">@if($invoice->is_advance)
                         {{ mb_strtoupper(__('invoice.advance_invoice')) }}
                     @endif {{ mb_strtoupper(__('invoice.invoice_number')) }}: </span>{{ $invoice->invoice_number }}
             </h2>
@@ -204,8 +204,8 @@
         </td>
 
         <td width="33%" style="text-align: center">
-            @if($client->contract_number)
-                {{ __('invoice.contract_number') }}: {{ $client->contract_number }}
+            @if($client->agreement_number)
+                {{ __('invoice.contract_number') }}: {{ $client->agreement_number }}
             @endif
         </td>
 

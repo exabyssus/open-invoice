@@ -33,3 +33,16 @@ it('prevents access to other tenants', function () {
     $this->get('/panel/' . $otherCompany->id)
         ->assertStatus(404);
 });
+
+it('sends an existing user back to the invitation after login', function () {
+    $invitation = \App\Models\CompanyInvitation::create([
+        'company_id' => $this->company->id,
+        'email' => $this->user->email,
+        'token' => 'tok123',
+    ]);
+    auth()->logout();
+
+    $this->get(route('invitation.accept', $invitation->token))->assertRedirect('/panel/login');
+
+    expect(session('url.intended'))->toBe(route('invitation.accept', $invitation->token));
+});

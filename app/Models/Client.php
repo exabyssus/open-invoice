@@ -38,10 +38,8 @@ class Client extends Model implements HasName
 
     protected static function booted(): void
     {
-        $tenant = Filament::getTenant();
-
-        static::addGlobalScope('team', static function (Builder $query) use ($tenant) {
-            $query->whereBelongsTo($tenant);
+        static::addGlobalScope('team', static function (Builder $query) {
+            ($tenant = Filament::getTenant()) ? $query->whereBelongsTo($tenant) : $query->whereRaw('0 = 1');
         });
 
         static::creating(static function ($model) {

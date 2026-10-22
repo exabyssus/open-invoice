@@ -30,8 +30,8 @@ class AcceptInvitationController extends Controller
                 auth()->logout();
             }
 
-            session(['invitation_token' => $token]);
-            return redirect("/panel/login?next=" . urlencode("/panel/invitation/{$token}/accept"));
+            redirect()->setIntendedUrl(route('invitation.accept', $token));
+            return redirect('/panel/login');
         }
 
         // New user — show registration form

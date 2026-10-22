@@ -108,3 +108,13 @@ it('uses current date in "date" style', function () use ($generator) {
 
     expect($generator($this->currentCompany))->toBe('DATE-2024.07.14');
 });
+
+it('does not reuse the number of a deleted invoice on "all time" style', function () use ($generator) {
+
+    $invoices = Invoice::factory()->count(3)->create(['company_id' => $this->currentCompany->id]);
+    $invoices->last()->delete();
+
+    $this->currentCompany->fill(['number_style' => NumberStyles::NUMBER_STYLE_ALL_TIME->name]);
+
+    expect($generator($this->currentCompany))->toBe('4');
+});

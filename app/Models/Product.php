@@ -23,19 +23,15 @@ class Product extends Model
 
     protected static function booted(): void
     {
-        $tenant = Filament::getTenant();
+        static::addGlobalScope('team', static function (Builder $query) {
+            ($tenant = Filament::getTenant()) ? $query->where('company_id', $tenant->id) : $query->whereRaw('0 = 1');
+        });
 
-        if ($tenant) {
-            static::addGlobalScope('team', static function (Builder $query) use ($tenant) {
-                $query->where('company_id', $tenant->id);
-            });
-
-            static::creating(static function ($model) use ($tenant) {
-                if (! $model->company_id) {
-                    $model->company_id = $tenant->id;
-                }
-            });
-        }
+        static::creating(static function ($model) {
+            if (! $model->company_id && Filament::getTenant()) {
+                $model->company_id = Filament::getTenant()->id;
+            }
+        });
     }
 
     public function company(): BelongsTo

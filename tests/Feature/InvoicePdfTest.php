@@ -66,3 +66,31 @@ it('includes invoice data in PDF', function () {
 
     expect(strlen($content))->toBeGreaterThan(0);
 });
+
+it('generates a PDF for an invoice of a deleted client', function () {
+    $this->client->delete();
+
+    $response = $this->get(route('filament.panel.resources.invoices.pdf', [
+        'tenant' => $this->company,
+        'record' => $this->invoice,
+        'method' => 'inline',
+    ]));
+
+    $response->assertOk()->assertHeader('Content-Type', 'application/pdf');
+});
+
+it('labels advance invoices and shows the client agreement number', function () {
+    $this->invoice->update(['is_advance' => true]);
+    $this->client->update(['agreement_number' => 'AGR-77']);
+
+    $html = view('invoices.default', [
+        'invoice' => $this->invoice->fresh(),
+        'logo' => null,
+        'client' => $this->client,
+        'company' => $this->company,
+        'lines' => $this->invoice->lines,
+        'totalAsText' => '',
+    ])->render();
+
+    expect($html)->toContain(mb_strtoupper(__('invoice.advance_invoice')))->toContain('AGR-77');
+});

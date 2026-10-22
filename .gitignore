@@ -19,3 +19,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/bills_2
+/public/css/filament
+/public/js/filament
+/public/fonts/filament
+/storage/fonts

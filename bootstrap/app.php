@@ -11,8 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // The app only receives traffic from the Coolify proxy (Traefik behind Cloudflare), which sets X-Forwarded-Proto.
+        // Without this Laravel thinks it is on http and the admin's Livewire calls are blocked as mixed content.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        \Sentry\Laravel\Integration::handles($exceptions);
     })->create();
