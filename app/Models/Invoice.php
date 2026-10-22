@@ -122,10 +122,10 @@ class Invoice extends Model
     {
         return $this
             ->lines
-            ->groupBy(fn(InvoiceLine $line) => $line->vat)
+            ->groupBy(fn(InvoiceLine $line) => (int) $line->vat)
             ->mapWithKeys(function(\Illuminate\Support\Collection $group) {
                 return [
-                    $group->first()->vat =>  Money::EUR($group->sum(fn(InvoiceLine $line) => (int)$line->vat_total->getAmount()))
+                    (int) $group->first()->vat =>  Money::EUR($group->sum(fn(InvoiceLine $line) => (int)$line->vat_total->getAmount()))
                 ];
             });
     }

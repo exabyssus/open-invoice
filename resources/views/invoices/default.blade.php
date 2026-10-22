@@ -277,7 +277,7 @@
 
 <div style="float: left; width:70%;">
     <div style="font-size: 12px;">
-        {{ __('invoice.invoice_created_by') }}: {{ $invoice->createdByUser->name }}
+        {{ __('invoice.invoice_created_by') }}: {{ $invoice->createdByUser?->name }}
     </div>
     <div style="font-size: 12px; margin-top: 20px">
         {{ __('invoice.invoice_date') }}: {{ $invoice->date->format('d.m.Y') }}

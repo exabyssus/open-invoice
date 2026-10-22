@@ -94,3 +94,17 @@ it('labels advance invoices and shows the client agreement number', function () 
 
     expect($html)->toContain(mb_strtoupper(__('invoice.advance_invoice')))->toContain('AGR-77');
 });
+
+it('generates a PDF for an old invoice without creator and with a line without VAT', function () {
+    $this->invoice->forceFill(['created_by' => 0])->save();
+    $this->invoice->lines()->create(['title' => 'No VAT', 'quantity' => 1, 'price' => 100, 'vat' => null, 'unit' => 'UNIT']);
+
+    set_error_handler(fn ($no, $str) => throw new ErrorException($str));
+    try {
+        $response = app(GenerateInvoicePdf::class)($this->invoice->fresh());
+    } finally {
+        restore_error_handler();
+    }
+
+    expect($response->getContent())->toStartWith('%PDF');
+});
