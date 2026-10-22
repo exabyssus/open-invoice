@@ -47,7 +47,9 @@ class ClientResource extends Resource
                     ];
                 })->columns(3)->columnSpanFull(),
 
-                TextInput::make('agreement_number')->label(__('resources.client.agreement_number'))
+                TextInput::make('agreement_number')->label(__('resources.client.agreement_number')),
+
+                TextInput::make('code')->label(__('resources.client.code'))->maxLength(32)->helperText(__('resources.client.code_hint')),
             ]);
     }
 
@@ -57,6 +59,7 @@ class ClientResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')->label(__('resources.client.title')),
                 Tables\Columns\TextColumn::make('registration_number')->label(__('resources.client.registration_number')),
+                Tables\Columns\TextColumn::make('code')->label(__('resources.client.code')),
             ])
             ->filters([
                 //

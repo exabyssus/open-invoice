@@ -23,6 +23,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -51,6 +53,18 @@ class InvoiceResource extends Resource
                     ->createOptionForm(self::getNewClientForm())
                     ->createOptionUsing(function (array $data): int {
                             return Filament::getTenant()->clients()->create($data)->getKey();
+                    })
+                    ->live()
+                    ->afterStateUpdated(function ($state, $old, Get $get, Set $set, string $operation) use ($numberGenerator) {
+                        $company = Filament::getTenant();
+                        if ($operation !== 'create' || ! GenerateInvoiceNumber::usesCustomerCode($company)) {
+                            return;
+                        }
+                        // only replace a number nobody has typed over
+                        $current = $get('invoice_number');
+                        if ($current === null || $current === '' || $current === $numberGenerator($company, Client::find($old))) {
+                            $set('invoice_number', $numberGenerator($company, Client::find($state)));
+                        }
                     })
                     ->required(),
                 DatePicker::make('date')->default(now())
@@ -254,7 +268,9 @@ class InvoiceResource extends Resource
                 ];
             })->columns(3)->columnSpanFull(),
 
-            TextInput::make('agreement_number')->label(__('resources.client.agreement_number'))
+            TextInput::make('agreement_number')->label(__('resources.client.agreement_number')),
+
+            TextInput::make('code')->label(__('resources.client.code'))->maxLength(32),
         ];
     }
 

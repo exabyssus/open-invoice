@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Client;
 use App\Models\Company;
 use App\NumberStyles;
 use Carbon\Carbon;
@@ -10,15 +11,26 @@ class GenerateInvoiceNumber
 {
     public const NUMBER_STYLE_DATE_FORMAT = 'Y.m.d';
 
-    public function __invoke(Company $company): string
+    public const CUSTOMER_CODE = '{{CUSTOMER_CODE}}';
+
+    /** The company's prefix/suffix may contain {{CUSTOMER_CODE}}, replaced with the client's code (empty until a client is chosen). */
+    public function __invoke(Company $company, ?Client $client = null): string
     {
-        return match ($company->number_style) {
+        $number = match ($company->number_style) {
             NumberStyles::NUMBER_STYLE_YEARLY => $this->yearly($company),
             NumberStyles::NUMBER_STYLE_ALL_TIME => $this->allTime($company),
             NumberStyles::NUMBER_STYLE_DATE => $this->date($company),
             NumberStyles::NUMBER_STYLE_DATE_SHORT => $this->dateShort($company),
             default => '',
         };
+
+        return str_replace(self::CUSTOMER_CODE, $client?->code ?? '', $number);
+    }
+
+    public static function usesCustomerCode(Company $company): bool
+    {
+        return $company->number_style !== NumberStyles::NUMBER_STYLE_NONE
+            && str_contains($company->number_prefix.$company->number_suffix, self::CUSTOMER_CODE);
     }
 
     private function yearly(Company $company): string

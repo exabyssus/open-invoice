@@ -189,3 +189,29 @@ it('can create invoice with VAT lines', function () {
     $invoice = Invoice::where('invoice_number', 'VAT-001')->first();
     expect($invoice->lines->first()->vat)->toBe(21);
 });
+
+it('fills the invoice number with the customer code of the chosen client', function () {
+    $this->company->update(['number_style' => 'NUMBER_STYLE_DATE_SHORT', 'number_prefix' => '', 'number_suffix' => '{{CUSTOMER_CODE}}']);
+    $this->client->update(['code' => '056']);
+    $other = Client::factory()->create(['company_id' => $this->company->id, 'code' => '011']);
+    $today = now()->format('dmy');
+
+    Livewire::test(CreateInvoice::class, ['tenant' => $this->company])
+        ->assertFormSet(['invoice_number' => "$today-"])
+        ->set('data.client_id', $this->client->id)
+        ->assertFormSet(['invoice_number' => "$today-056"])
+        ->set('data.client_id', $other->id)
+        ->assertFormSet(['invoice_number' => "$today-011"]) // still the generated number: follows the client
+        ->set('data.invoice_number', 'TYPED-1')
+        ->set('data.client_id', $this->client->id)
+        ->assertFormSet(['invoice_number' => 'TYPED-1']);  // typed over: left alone
+});
+
+it('can set the customer code on a client', function () {
+    Livewire::test(\App\Filament\Pages\EditClient::class, ['tenant' => $this->company, 'record' => $this->client->getRouteKey()])
+        ->fillForm(['code' => 'AB-7'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($this->client->fresh()->code)->toBe('AB-7');
+});

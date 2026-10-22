@@ -73,7 +73,7 @@ class CompanyProfile extends EditTenantProfile
                     ->columns(2),
                 Group::make(function () {
                     return [
-                        TextInput::make('number_prefix')->label(__('resources.company.number_prefix')),
+                        TextInput::make('number_prefix')->label(__('resources.company.number_prefix'))->helperText(__('resources.company.number_placeholder_hint')),
                         Select::make('number_style')
                             ->label(__('resources.company.number_style'))
                             ->options([
@@ -83,7 +83,7 @@ class CompanyProfile extends EditTenantProfile
                                 NumberStyles::NUMBER_STYLE_DATE_SHORT->name => __('resources.company.number_style_date_short'),
                                 NumberStyles::NUMBER_STYLE_NONE->name => __('resources.company.number_style_none'),
                             ]),
-                        TextInput::make('number_suffix')->label(__('resources.company.number_suffix')),
+                        TextInput::make('number_suffix')->label(__('resources.company.number_suffix'))->helperText(__('resources.company.number_placeholder_hint')),
                     ];
                 })
                     ->columnSpanFull()
