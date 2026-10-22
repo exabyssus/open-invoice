@@ -24,8 +24,12 @@ it('does not serve anything else', function () {
     $this->get('/docs')->assertNotFound(); // no listing
 });
 
-it('sends the old host to the new address, but still serves its pdf links', function () {
-    $this->get('http://rekini.agw.lv/panel/anything')->assertRedirect(config('app.url'));
-
+it('serves the old pdf links on the main address', function () {
     $this->get('http://rekini.agw.lv/docs/sia_bookwork/'.rawurlencode('161026-056-ZS-CIŅI-abc12.pdf'))->assertOk();
+});
+
+it('sends the first address to the main one, keeping the path', function () {
+    $this->get('http://manirekini.agw.lv/panel/login?x=1')->assertRedirect(config('app.url').'/panel/login?x=1');
+    $this->get('http://manirekini.agw.lv')->assertRedirect(config('app.url').'/');
+    $this->get('http://rekini.agw.lv/panel/login')->assertOk(); // the main address is not redirected
 });

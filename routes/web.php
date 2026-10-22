@@ -3,10 +3,11 @@
 use App\Http\Controllers\AcceptInvitationController;
 use App\Http\Controllers\AcceptInvitationRegisterController;
 use App\Http\Controllers\ImpersonateController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-// Links of the old rekini.agw.lv keep working: /docs/<company folder>/<file>.pdf is one of the PDFs it issued
+// Download links of the old rekini system keep working on its address: /docs/<company folder>/<file>.pdf is one of the PDFs it issued
 Route::get('/docs/{folder}/{file}', function (string $folder, string $file) {
     $path = "legacy-pdfs/$folder/$file";
 
@@ -23,8 +24,8 @@ Route::get('/docs/{folder}/{file}', function (string $folder, string $file) {
     return Storage::disk('private')->response($path, null, ['Content-Type' => 'application/pdf'], 'inline');
 });
 
-// the old host only serves those links, anything else goes to the new address
-Route::domain('rekini.agw.lv')->get('/{any?}', fn () => redirect(config('app.url')))->where('any', '(?!docs/).*');
+// the first address of this app redirects to the main one (APP_URL), same path
+Route::domain('manirekini.agw.lv')->get('/{any?}', fn (Request $request) => redirect(rtrim(config('app.url'), '/').$request->getRequestUri()))->where('any', '.*');
 
 Route::get('/', function () {
     return redirect(\Filament\Facades\Filament::getUrl());
