@@ -191,7 +191,7 @@ it('can create invoice with VAT lines', function () {
 });
 
 it('fills the invoice number with the customer code of the chosen client', function () {
-    $this->company->update(['number_style' => 'NUMBER_STYLE_DATE_SHORT', 'number_prefix' => '', 'number_suffix' => '{{CUSTOMER_CODE}}']);
+    $this->company->update(['number_style' => 'NUMBER_STYLE_DATE_SHORT', 'number_prefix' => '', 'number_suffix' => 'CUSTOMER_CODE']);
     $this->client->update(['code' => '056']);
     $other = Client::factory()->create(['company_id' => $this->company->id, 'code' => '011']);
     $today = now()->format('dmy');

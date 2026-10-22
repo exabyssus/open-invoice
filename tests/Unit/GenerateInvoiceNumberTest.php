@@ -132,12 +132,12 @@ it('starts with DDMMYY- in "date short" style and leaves the rest to be typed', 
     expect($generator($this->currentCompany))->toBe('161026-');
 });
 
-it('puts the customer code where {{CUSTOMER_CODE}} is', function () use ($generator) {
+it('puts the customer code where CUSTOMER_CODE is', function () use ($generator) {
 
     $this->currentCompany->fill([
         'number_style' => NumberStyles::NUMBER_STYLE_DATE_SHORT->name,
         'number_prefix' => '',
-        'number_suffix' => '{{CUSTOMER_CODE}}'
+        'number_suffix' => 'CUSTOMER_CODE'
     ]);
     \Carbon\Carbon::setTestNow(\Illuminate\Support\Carbon::create(2026, 10, 16));
     $client = \App\Models\Client::factory()->create(['company_id' => $this->currentCompany->id, 'code' => '056']);
@@ -146,6 +146,9 @@ it('puts the customer code where {{CUSTOMER_CODE}} is', function () use ($genera
         ->and($generator($this->currentCompany))->toBe('161026-') // no client chosen yet
         ->and($generator($this->currentCompany, \App\Models\Client::factory()->create(['company_id' => $this->currentCompany->id])))->toBe('161026-')
         ->and(\App\Services\GenerateInvoiceNumber::usesCustomerCode($this->currentCompany))->toBeTrue();
+
+    $this->currentCompany->fill(['number_suffix' => '{{CUSTOMER_CODE}}']); // braces are accepted too
+    expect($generator($this->currentCompany, $client))->toBe('161026-056');
 
     $this->currentCompany->fill(['number_prefix' => 'X-', 'number_suffix' => '', 'number_style' => NumberStyles::NUMBER_STYLE_ALL_TIME->name]);
     expect(\App\Services\GenerateInvoiceNumber::usesCustomerCode($this->currentCompany))->toBeFalse();

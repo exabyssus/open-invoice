@@ -11,9 +11,10 @@ class GenerateInvoiceNumber
 {
     public const NUMBER_STYLE_DATE_FORMAT = 'Y.m.d';
 
-    public const CUSTOMER_CODE = '{{CUSTOMER_CODE}}';
+    /** Words in a company's prefix/suffix that are replaced when the number is generated. */
+    public const CUSTOMER_CODE = 'CUSTOMER_CODE';
 
-    /** The company's prefix/suffix may contain {{CUSTOMER_CODE}}, replaced with the client's code (empty until a client is chosen). */
+    /** CUSTOMER_CODE is replaced with the client's code (empty until a client is chosen); {{CUSTOMER_CODE}} works too. */
     public function __invoke(Company $company, ?Client $client = null): string
     {
         $number = match ($company->number_style) {
@@ -24,7 +25,7 @@ class GenerateInvoiceNumber
             default => '',
         };
 
-        return str_replace(self::CUSTOMER_CODE, $client?->code ?? '', $number);
+        return str_replace(['{{'.self::CUSTOMER_CODE.'}}', self::CUSTOMER_CODE], $client?->code ?? '', $number);
     }
 
     public static function usesCustomerCode(Company $company): bool
