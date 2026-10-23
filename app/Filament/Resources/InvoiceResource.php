@@ -104,8 +104,14 @@ class InvoiceResource extends Resource
                     ->inline(false)
                     ->visibleOn('edit'),
 
-                Repeater::make('lines')
-                    ->relationship()
+                self::linesRepeater()->relationship(),
+            ]);
+    }
+
+    /** The invoice lines; invoices store them in invoice_lines, schedules as json. */
+    public static function linesRepeater(): Repeater
+    {
+        return Repeater::make('lines')
                     ->label('Rēķina rindas')
                     ->schema([
                         Group::make(function () {
@@ -162,8 +168,7 @@ class InvoiceResource extends Resource
                             ];
                         })->columns(Filament::getTenant()->vat_number ? 6 : 5)
                             ->columnSpanFull()
-                    ])->columnSpanFull()
-            ]);
+                    ])->columnSpanFull();
     }
 
     public static function table(Table $table): Table
@@ -199,7 +204,11 @@ class InvoiceResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('date')
                     ->label(__('resources.invoice.date'))
-                    ->formatStateUsing(fn($state) => $state->format('Y.m.d'))
+                    ->formatStateUsing(fn($state) => $state->format('Y.m.d')),
+                Tables\Columns\TextColumn::make('sent_at')
+                    ->label(__('resources.invoice.sent_at'))
+                    ->dateTime('Y.m.d H:i')
+                    ->placeholder('–'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('client_id')
@@ -267,6 +276,8 @@ class InvoiceResource extends Resource
                     TextInput::make('bank_iban')->label(__('resources.client.bank_iban')),
                 ];
             })->columns(3)->columnSpanFull(),
+
+            TextInput::make('email')->label(__('resources.client.email'))->email()->maxLength(255),
 
             TextInput::make('agreement_number')->label(__('resources.client.agreement_number')),
 

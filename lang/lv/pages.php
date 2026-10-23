@@ -19,6 +19,11 @@ return [
         'invoice_line' => 'Rēķina rinda',
     ],
 
+    'schedules' => [
+        'singular' => 'Regulārais rēķins',
+        'plural' => 'Regulārie rēķini',
+    ],
+
     'clients' => [
         'singular' => 'Klients',
         'plural' => 'Klienti',

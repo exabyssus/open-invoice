@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property ?string code
+ * @property ?string email
  * @property string title
  * @property string registration_number
  * @property string address
@@ -32,6 +33,7 @@ class Client extends Model implements HasName
         'address',
         'agreement_number',
         'code',
+        'email',
         'vat_number',
         'bank_name',
         'bank_swift',

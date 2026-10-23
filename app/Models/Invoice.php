@@ -40,7 +40,7 @@ class Invoice extends Model
         // auto-sets values on creation
         static::creating(static function ($query) {
             $query->template = 'default';
-            $query->created_by = auth()->user()->id;
+            $query->created_by ??= auth()->id();
             if (! $query->company_id && Filament::getTenant()) {
                 $query->company_id = Filament::getTenant()->id;
             }
@@ -61,6 +61,7 @@ class Invoice extends Model
             'due_date' => 'immutable_datetime',
             'is_advance' => 'boolean',
             'is_paid' => 'boolean',
+            'sent_at' => 'datetime',
         ];
     }
 

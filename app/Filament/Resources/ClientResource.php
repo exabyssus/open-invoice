@@ -47,6 +47,8 @@ class ClientResource extends Resource
                     ];
                 })->columns(3)->columnSpanFull(),
 
+                TextInput::make('email')->label(__('resources.client.email'))->email()->maxLength(255),
+
                 TextInput::make('agreement_number')->label(__('resources.client.agreement_number')),
 
                 TextInput::make('code')->label(__('resources.client.code'))->maxLength(32)->helperText(__('resources.client.code_hint')),

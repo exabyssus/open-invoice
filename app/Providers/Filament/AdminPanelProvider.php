@@ -8,6 +8,7 @@ use App\Filament\Pages\RegisterCompany;
 use App\Filament\Resources\ClientResource;
 use App\Filament\Resources\CompanyResource;
 use App\Filament\Resources\InvoiceResource;
+use App\Filament\Resources\InvoiceScheduleResource;
 use App\Filament\Resources\MemberResource;
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\UserResource;
@@ -90,6 +91,7 @@ class AdminPanelProvider extends PanelProvider
                 ClientResource::class,
                 CompanyResource::class,
                 InvoiceResource::class,
+                InvoiceScheduleResource::class,
                 MemberResource::class,
                 ProductResource::class,
                 UserResource::class,
