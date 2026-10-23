@@ -59,9 +59,10 @@ class ClientResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')->label(__('resources.client.title')),
-                Tables\Columns\TextColumn::make('registration_number')->label(__('resources.client.registration_number')),
-                Tables\Columns\TextColumn::make('code')->label(__('resources.client.code')),
+                Tables\Columns\TextColumn::make('title')->label(__('resources.client.title'))->searchable(),
+                Tables\Columns\TextColumn::make('registration_number')->label(__('resources.client.registration_number'))->searchable(),
+                Tables\Columns\TextColumn::make('code')->label(__('resources.client.code'))->searchable(),
+                Tables\Columns\TextColumn::make('email')->label(__('resources.client.email'))->searchable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

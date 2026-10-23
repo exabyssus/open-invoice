@@ -28,6 +28,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class InvoiceResource extends Resource
 {
@@ -183,9 +184,13 @@ class InvoiceResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->filtersLayout(Tables\Enums\FiltersLayout::Dropdown)
             ->columns([
-                Tables\Columns\TextColumn::make('invoice_number')->label(__('resources.invoice.invoice_number')),
+                Tables\Columns\TextColumn::make('invoice_number')->label(__('resources.invoice.invoice_number'))->searchable(),
                 Tables\Columns\TextColumn::make('client_id')
                     ->formatStateUsing(fn ($state) => $clients[$state] ?? '')
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereIn(
+                        'client_id',
+                        Client::query()->where('title', 'like', "%{$search}%")->orWhere('registration_number', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%")->select('id')
+                    ))
                     ->label(__('resources.invoice.client')),
                 Tables\Columns\IconColumn::make('is_paid')
                     ->alignCenter()
@@ -213,6 +218,7 @@ class InvoiceResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('client_id')
                     ->label(__('resources.invoice.client'))
+                    ->searchable()
                     ->options($clients),
                 Tables\Filters\SelectFilter::make('is_paid')
                     ->label(__('resources.invoice.is_paid'))
