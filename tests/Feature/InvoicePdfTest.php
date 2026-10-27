@@ -3,6 +3,7 @@
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Services\GenerateInvoicePdf;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
@@ -126,4 +127,10 @@ it('serves the PDF issued by the old system for an imported invoice', function (
 
 it('offers a half-year unit', function () {
     expect(\App\Units::asOptions())->toHaveKey('HALF_YEAR')->and(\App\Units::asOptions()['HALF_YEAR'])->toBe('Pusgads');
+});
+
+it('serves the PDF route with a cacheable action, not a closure', function () {
+    $action = Route::getRoutes()->getByName('filament.panel.resources.invoices.pdf')->getAction('uses');
+
+    expect($action)->not->toBeInstanceOf(Closure::class);
 });
