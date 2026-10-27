@@ -249,6 +249,7 @@ class InvoiceResource extends Resource
                     ]))
                     ->label(__('pages.invoices.download'))
                     ->openUrlInNewTab(),
+                \App\Filament\Actions\SendInvoiceAction::make(),
                 Actions\EditAction::make(),
             ])
             ->bulkActions([
