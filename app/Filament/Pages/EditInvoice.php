@@ -36,7 +36,6 @@ class EditInvoice extends EditRecord
                     'method' => 'download',
                 ]))
                 ->openUrlInNewTab(),
-            \App\Filament\Actions\SendInvoiceAction::make(),
             Actions\DeleteAction::make(),
         ];
     }
