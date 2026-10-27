@@ -8,5 +8,6 @@ return [
         'total' => 'Summa apmaksai',
         'due' => 'Apmaksas termiņš',
         'regards' => 'Ar cieņu,',
+        'attached' => 'Rēķins PDF formātā (:file) ir pievienots šim e-pastam.',
     ],
 ];

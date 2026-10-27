@@ -239,6 +239,7 @@ it('sends the invoice with an edited mail and then offers Resend', function () {
     expect($mail->getTo()[0]->getAddress())->toBe('cits@example.test')
         ->and($mail->getSubject())->toBe('Mans temats')
         ->and($mail->getTextBody())->toContain('Mans teksts <b>')
+        ->and($mail->getHtmlBody())->toContain('Mans teksts &lt;b&gt;')->toContain($this->company->title)
         ->and($mail->getAttachments()[0]->getBody())->toStartWith('%PDF')
         ->and($invoice->fresh()->sent_at)->not->toBeNull();
 

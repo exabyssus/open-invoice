@@ -50,7 +50,11 @@ class InvoiceMail extends Mailable
 
     public function content(): Content
     {
-        return new Content(text: 'emails.raw', with: ['body' => $this->body ?? self::defaultBody($this->invoice)]);
+        return new Content(html: 'emails.invoice-html', text: 'emails.raw', with: [
+            'body' => $this->body ?? self::defaultBody($this->invoice),
+            'company' => $this->invoice->company,
+            'file' => self::attachmentName($this->invoice),
+        ]);
     }
 
     public function attachments(): array
