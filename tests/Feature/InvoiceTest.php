@@ -215,3 +215,33 @@ it('can set the customer code on a client', function () {
 
     expect($this->client->fresh()->code)->toBe('AB-7');
 });
+
+it('sends the invoice with an edited mail and then offers Resend', function () {
+    $this->client->update(['email' => 'klients@example.test']);
+    $invoice = Invoice::factory()->create([
+        'company_id' => $this->company->id,
+        'client_id' => $this->client->id,
+        'created_by' => $this->user->id,
+        'template' => 'default',
+        'sent_at' => null,
+    ]);
+
+    $list = Livewire::test(ListInvoices::class, ['tenant' => $this->company])
+        ->mountTableAction('send', $invoice)
+        ->assertTableActionDataSet(fn (array $data) => $data['to'] === 'klients@example.test'
+            && str_contains($data['subject'], $invoice->invoice_number)
+            && str_contains($data['body'], $invoice->invoice_number))
+        ->setTableActionData(['to' => 'cits@example.test', 'subject' => 'Mans temats', 'body' => 'Mans teksts <b>'])
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors();
+
+    $mail = app('mailer')->getSymfonyTransport()->messages()->sole()->getOriginalMessage();
+    expect($mail->getTo()[0]->getAddress())->toBe('cits@example.test')
+        ->and($mail->getSubject())->toBe('Mans temats')
+        ->and($mail->getTextBody())->toContain('Mans teksts <b>')
+        ->and($mail->getHtmlBody())->toContain('Mans teksts &lt;b&gt;')->toContain($this->company->title)
+        ->and($mail->getAttachments()[0]->getBody())->toStartWith('%PDF')
+        ->and($invoice->fresh()->sent_at)->not->toBeNull();
+
+    $list->assertTableActionExists('send', fn ($action) => $action->getLabel() === __('pages.invoices.resend'), $invoice);
+});

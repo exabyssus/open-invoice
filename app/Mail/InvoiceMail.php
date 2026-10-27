@@ -14,7 +14,27 @@ use Illuminate\Support\Str;
 
 class InvoiceMail extends Mailable
 {
-    public function __construct(public Invoice $invoice) {}
+    /** $subjectLine and $body are the hand-edited mail from the send dialog; null = the standard text. */
+    public function __construct(public Invoice $invoice, public ?string $subjectLine = null, public ?string $body = null) {}
+
+    public static function defaultSubject(Invoice $invoice): string
+    {
+        return __('mail.invoice.subject', ['number' => $invoice->invoice_number, 'company' => $invoice->company->title]);
+    }
+
+    public static function defaultBody(Invoice $invoice): string
+    {
+        return trim(view('emails.invoice', [
+            'invoice' => $invoice,
+            'company' => $invoice->company,
+            'total' => Money::defaultFormat($invoice->getTotalWithVatAndTax()),
+        ])->render());
+    }
+
+    public static function attachmentName(Invoice $invoice): string
+    {
+        return Str::slug($invoice->invoice_number.'-'.$invoice->company->title).'.pdf';
+    }
 
     public function envelope(): Envelope
     {
@@ -24,16 +44,16 @@ class InvoiceMail extends Mailable
         return new Envelope(
             from: new Address(config('mail.from.address'), $company->title),
             replyTo: $owner ? [new Address($owner->email, $owner->name)] : [],
-            subject: __('mail.invoice.subject', ['number' => $this->invoice->invoice_number, 'company' => $company->title]),
+            subject: $this->subjectLine ?? self::defaultSubject($this->invoice),
         );
     }
 
     public function content(): Content
     {
-        return new Content(text: 'emails.invoice', with: [
-            'invoice' => $this->invoice,
+        return new Content(html: 'emails.invoice-html', text: 'emails.raw', with: [
+            'body' => $this->body ?? self::defaultBody($this->invoice),
             'company' => $this->invoice->company,
-            'total' => Money::defaultFormat($this->invoice->getTotalWithVatAndTax()),
+            'file' => self::attachmentName($this->invoice),
         ]);
     }
 
@@ -42,7 +62,7 @@ class InvoiceMail extends Mailable
         return [
             Attachment::fromData(
                 fn () => (new GenerateInvoicePdf)($this->invoice)->getContent(),
-                Str::slug($this->invoice->invoice_number.'-'.$this->invoice->company->title).'.pdf',
+                self::attachmentName($this->invoice),
             )->withMime('application/pdf'),
         ];
     }
