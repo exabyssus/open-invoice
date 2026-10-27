@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Pages\ViewInvoicePdf;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Services\GenerateInvoicePdf;
@@ -132,5 +133,5 @@ it('offers a half-year unit', function () {
 it('serves the PDF route with a cacheable action, not a closure', function () {
     $action = Route::getRoutes()->getByName('filament.panel.resources.invoices.pdf')->getAction('uses');
 
-    expect($action)->not->toBeInstanceOf(Closure::class);
+    expect($action)->toBe(ViewInvoicePdf::class.'@serve');
 });
